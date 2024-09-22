@@ -6,7 +6,7 @@
     {
         private Tile[] _tiles;
 
-        private TilesOrder CurrentOrder { get; }
+        private TilesOrder _currentOrder;
 
         public Puzzle(Tile[] tiles)
         {
@@ -17,7 +17,13 @@
                 throw new ArgumentOutOfRangeException(nameof(tiles), "Number of tiles must be 9.");
 
             _tiles = tiles;
+
+            Shuffle();
         }
 
+        private void Shuffle()
+        {
+            _currentOrder = new TilesOrder(_tiles);
+        }
     }
 }
