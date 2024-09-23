@@ -1,7 +1,30 @@
-﻿namespace VerflixtPuzzle.Model
+﻿using System.Runtime.CompilerServices;
+
+namespace VerflixtPuzzle.Model
 {
-    public abstract class Side : ISide
+    public enum SideTypeOperator
     {
-        public abstract bool Fit(Side part);
+        Xor,
+        And
+    }
+
+    public abstract record SideType;
+
+    public abstract record XorSideType();
+
+    public record Side(XorSideType Xor, int And)
+    {
+        public bool Fit(Side s2)
+        {
+            return 
+        }
+    }
+
+    public static class SideExtensions
+    {
+        public static bool Fit(this Side s1, Side s2)
+        {
+            s1.
+        }
     }
 }
