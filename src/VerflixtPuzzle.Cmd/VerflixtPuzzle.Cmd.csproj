@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Pastel" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\VerflixtPuzzle.Model\VerflixtPuzzle.Model.csproj" />
   </ItemGroup>
 

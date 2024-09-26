@@ -1,8 +1,9 @@
 ﻿using System.Text;
+using VerflixtPuzzle.Model.TSide;
 
 namespace VerflixtPuzzle.Model
 {
-    public class Tile(Side up, Side down, Side left, Side right)
+    public class Tile(Side left, Side up, Side right, Side down)
     {
         public Side Up { get; private set; } = up ?? throw new ArgumentNullException(nameof(up));
         public Side Down { get; private set; } = down ?? throw new ArgumentNullException(nameof(down));
@@ -37,24 +38,26 @@ namespace VerflixtPuzzle.Model
 
     public sealed class Puzzle
     {
-        private readonly Tile[] _tiles;
+        private readonly SortedList<int, Tile> _tiles;
 
-        public Puzzle(Tile[] tiles)
+        public Puzzle(SortedList<int, Tile> tiles)
         {
             if(tiles == null)
                 throw new ArgumentNullException(nameof(tiles));
 
-            if (tiles.Length != 9)
+            if (tiles.Count != 9)
                 throw new ArgumentOutOfRangeException(nameof(tiles), "Number of tiles must be 9.");
 
             foreach (var tile in tiles)
             {
-                if(tile == null)
+                if(tile.Value == null)
                     throw new ArgumentNullException(nameof(tiles), "Tiles collection should not contain null Tiles.");
             }
 
             _tiles = tiles;
         }
+
+        public int TilesCount => _tiles.Count;
 
         public void Reposition(int index1, int index2)
         {

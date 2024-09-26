@@ -1,2 +1,5 @@
 /src/VerflixtPuzzle.Model/obj
 /src/VerflixtPuzzle.Model/bin
+/src/VerflixtPuzzle.Cmd/bin
+/src/VerflixtPuzzle.Cmd/obj
+/src/.vs
