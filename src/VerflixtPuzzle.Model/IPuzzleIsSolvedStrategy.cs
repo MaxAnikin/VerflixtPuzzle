@@ -28,6 +28,30 @@ public class DefaultIsSolvedStrategy : IPuzzleIsSolvedStrategy
        if (!puzzle.GetTile(1).Down.Fit(puzzle.GetTile(4).Up))
            return false;
 
-       return true;
+       if (!puzzle.GetTile(2).Down.Fit(puzzle.GetTile(5).Up))
+           return false;
+
+       if (!puzzle.GetTile(3).Down.Fit(puzzle.GetTile(6).Up))
+           return false;
+
+       if (!puzzle.GetTile(3).Right.Fit(puzzle.GetTile(4).Left))
+           return false;
+
+       if (!puzzle.GetTile(4).Right.Fit(puzzle.GetTile(5).Left))
+           return false;
+
+       if (!puzzle.GetTile(4).Down.Fit(puzzle.GetTile(7).Up))
+           return false;
+
+       if (!puzzle.GetTile(5).Down.Fit(puzzle.GetTile(8).Up))
+           return false;
+
+       if (!puzzle.GetTile(6).Right.Fit(puzzle.GetTile(7).Left))
+           return false;
+
+       if (!puzzle.GetTile(7).Right.Fit(puzzle.GetTile(8).Left))
+           return false;
+
+        return true;
     }
 }

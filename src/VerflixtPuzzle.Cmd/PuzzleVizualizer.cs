@@ -11,7 +11,6 @@ namespace VerflixtPuzzle.Cmd
 
     public class PuzzleConsoleVisualizer : IPuzzleVisualizer
     {
-
         public void Visualize(Puzzle puzzle)
         {
             var initialCursorPosition = Console.GetCursorPosition();

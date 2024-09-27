@@ -1,11 +1,10 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using VerflixtPuzzle.Cmd;
-
-var c = Console.GetCursorPosition();
+using VerflixtPuzzle.Model;
 
 var builder = new PuzzleBuilder();
-var puzzle = builder.BuildTPuzzle();
+var puzzle = builder.BuildTPuzzleSimple();
 
 var vis = new PuzzleConsoleVisualizer();
 vis.Visualize(puzzle);
@@ -13,20 +12,41 @@ vis.Visualize(puzzle);
 Console.WriteLine("Let's solve the puzzle: ");
 Console.WriteLine();
 
-int overall = 0;
-int cur = 0;
-while (!puzzle.IsSolved() || overall < 500)
+var positions = new HashSet<string>();
+
+PermutateAndCheck(puzzle, 0);
+
+void PermutateAndCheck(Puzzle puzzle1, int s)
 {
-    if (cur > 3)
+    if (s + 1 == puzzle1.TilesCount)
     {
-        puzzle.GetTile(overall / 4).Rotate();
-        cur = 0;
-        vis.Visualize(puzzle);
+        RotateAndCheck(puzzle, 0);
+        return;
     }
 
-    puzzle.GetTile(current).Rotate();
-    vis.Visualize(puzzle);
+    PermutateAndCheck(puzzle1, s + 1);
+}
 
-    cur++;
-    overall++;
-} 
+Console.WriteLine("Search completed.");
+
+
+void RotateAndCheck(Puzzle puzzle1, int i)
+{
+    for (int j = 0; j < 4; j++)
+    {
+        if (puzzle1.TilesCount > i + 1)
+        {
+            RotateAndCheck(puzzle1, i + 1);
+        }
+
+        if (puzzle1.IsSolved())
+        {
+            vis.Visualize(puzzle1);
+            var positionId = puzzle1.GetPositionUniqueId();
+            if (positions.Add(positionId))
+                Console.WriteLine($"position: {positionId}");
+        }
+
+        puzzle1.GetTile(i).Rotate();
+    }
+}
