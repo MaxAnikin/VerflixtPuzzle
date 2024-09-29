@@ -14,18 +14,9 @@ Console.WriteLine();
 
 var positions = new HashSet<string>();
 
+puzzle.Permutate(new int[] {4, 1, 2, 3, 0, 5, 6, 7, 8 });
+
 RotateAndCheck(puzzle, 0);
-
-//void PermutateAndCheck(Puzzle puzzle1, int s)
-//{
-//    if (s + 1 == puzzle1.TilesCount)
-//    {
-//        RotateAndCheck(puzzle, 0);
-//        return;
-//    }
-
-//    PermutateAndCheck(puzzle1, s + 1);
-//}
 
 Console.WriteLine("Search completed.");
 

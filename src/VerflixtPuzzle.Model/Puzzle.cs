@@ -38,47 +38,27 @@ namespace VerflixtPuzzle.Model
 
     public sealed class Puzzle
     {
-        private readonly SortedList<int, Tile> _tiles;
+        private Tile[] _initialTiles;
 
-        public Puzzle(SortedList<int, Tile> tiles)
+        public Puzzle(Tile[] tiles)
         {
             if(tiles == null)
                 throw new ArgumentNullException(nameof(tiles));
 
-            if (tiles.Count != 9)
+            if (tiles.Length != 9)
                 throw new ArgumentOutOfRangeException(nameof(tiles), "Number of tiles must be 9.");
 
-            foreach (var tile in tiles)
-            {
-                if(tile.Value == null)
-                    throw new ArgumentNullException(nameof(tiles), "Tiles collection should not contain null Tiles.");
-            }
-
-            _tiles = tiles;
+            _initialTiles = tiles;
         }
 
-        public int TilesCount => _tiles.Count;
-
-        public void Reposition(int index1, int index2)
-        {
-            if (index1 is >= 0 and <= 8)
-                throw new ArgumentOutOfRangeException(nameof(index1), "Index must be between 0 and 8.");
-
-            if (index2 is >= 0 and <= 8)
-                throw new ArgumentOutOfRangeException(nameof(index2), "Index must be between 0 and 8.");
-
-            if(index1 == index2)
-                return;
-
-            (_tiles[index1], _tiles[index2]) = (_tiles[index2], _tiles[index1]);
-        }
+        public int TilesCount => _initialTiles.Length;
 
         public string GetPositionUniqueId()
         {
             var builder = new StringBuilder();
             for (int i = 0; i < 9; i++)
             {
-                builder.Append($"{_tiles[i].PositionId}");
+                builder.Append($"{_initialTiles[i].PositionId}");
             }
             return builder.ToString();
         }
@@ -98,8 +78,19 @@ namespace VerflixtPuzzle.Model
 
         public Tile GetTile(int index) => index switch
         {
-            >= 0 and <= 8 => _tiles[index],
+            >= 0 and <= 8 => _initialTiles[index],
             _ => throw new ArgumentOutOfRangeException(nameof(index), "Index must be between 0 and 8."),
         };
+
+        public void Permutate(int[] order)
+        {
+            var temp = new Tile[_initialTiles.Length];
+            for (int j = 0; j < order.Length; j++)
+            {
+                temp[j] = _initialTiles[order[j]];
+            }
+
+            _initialTiles = temp;
+        }
     }
 }

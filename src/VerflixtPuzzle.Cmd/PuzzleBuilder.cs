@@ -79,7 +79,7 @@ public class PuzzleBuilder
             }
         };
 
-        return new Puzzle(tiles);
+        return new Puzzle(tiles.Select(s => s.Value).ToArray());
     }
 
     public Puzzle BuildTPuzzle()
@@ -158,6 +158,6 @@ public class PuzzleBuilder
             }
         };
 
-        return new Puzzle(tiles);
+        return new Puzzle(tiles.Select(s => s.Value).ToArray());
     }
 }
