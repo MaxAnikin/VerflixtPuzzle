@@ -14,18 +14,18 @@ Console.WriteLine();
 
 var positions = new HashSet<string>();
 
-PermutateAndCheck(puzzle, 0);
+RotateAndCheck(puzzle, 0);
 
-void PermutateAndCheck(Puzzle puzzle1, int s)
-{
-    if (s + 1 == puzzle1.TilesCount)
-    {
-        RotateAndCheck(puzzle, 0);
-        return;
-    }
+//void PermutateAndCheck(Puzzle puzzle1, int s)
+//{
+//    if (s + 1 == puzzle1.TilesCount)
+//    {
+//        RotateAndCheck(puzzle, 0);
+//        return;
+//    }
 
-    PermutateAndCheck(puzzle1, s + 1);
-}
+//    PermutateAndCheck(puzzle1, s + 1);
+//}
 
 Console.WriteLine("Search completed.");
 
@@ -44,7 +44,10 @@ void RotateAndCheck(Puzzle puzzle1, int i)
             vis.Visualize(puzzle1);
             var positionId = puzzle1.GetPositionUniqueId();
             if (positions.Add(positionId))
+            {
                 Console.WriteLine($"position: {positionId}");
+                Console.WriteLine();
+            }
         }
 
         puzzle1.GetTile(i).Rotate();

@@ -15,54 +15,74 @@ namespace VerflixtPuzzle.Cmd
         {
             var initialCursorPosition = Console.GetCursorPosition();
 
-            for (int i = 0; i < 3; i++)
-            {
-                VisualizeTile(puzzle.GetTile(i));
-                Console.SetCursorPosition(initialCursorPosition.Left + ((i+1) * 7), initialCursorPosition.Top);
-            }
-            
-            Console.SetCursorPosition(initialCursorPosition.Left, initialCursorPosition.Top + 4);
+            VisualizeTileLine1(puzzle.GetTile(0), puzzle.GetTile(1), puzzle.GetTile(2));
+            Console.WriteLine();
+            VisualizeTileLine2(puzzle.GetTile(0), puzzle.GetTile(1), puzzle.GetTile(2));
+            Console.WriteLine();
+            VisualizeTileLine3(puzzle.GetTile(0), puzzle.GetTile(1), puzzle.GetTile(2));
 
+            Console.WriteLine();
 
-            for (int i = 3; i < 6; i++)
-            {
-                VisualizeTile(puzzle.GetTile(i));
-                Console.SetCursorPosition(initialCursorPosition.Left + ((i-2) * 7), initialCursorPosition.Top+4);
-            }
+            VisualizeTileLine1(puzzle.GetTile(3), puzzle.GetTile(4), puzzle.GetTile(5));
+            Console.WriteLine();
+            VisualizeTileLine2(puzzle.GetTile(3), puzzle.GetTile(4), puzzle.GetTile(5));
+            Console.WriteLine();
+            VisualizeTileLine3(puzzle.GetTile(3), puzzle.GetTile(4), puzzle.GetTile(5));
 
-            Console.SetCursorPosition(initialCursorPosition.Left, initialCursorPosition.Top + 8);
+            Console.WriteLine();
 
-            for (int i = 6; i < 9; i++)
-            {
-                VisualizeTile(puzzle.GetTile(i));
-                Console.SetCursorPosition(initialCursorPosition.Left + ((i-5) * 7), initialCursorPosition.Top+8);
-            }
+            VisualizeTileLine1(puzzle.GetTile(6), puzzle.GetTile(7), puzzle.GetTile(8));
+            Console.WriteLine();
+            VisualizeTileLine2(puzzle.GetTile(6), puzzle.GetTile(7), puzzle.GetTile(8));
+            Console.WriteLine();
+            VisualizeTileLine3(puzzle.GetTile(6), puzzle.GetTile(7), puzzle.GetTile(8));
 
-            Console.SetCursorPosition(initialCursorPosition.Left, initialCursorPosition.Top+12);
+            Console.WriteLine();
         }
 
-        private void VisualizeTile(Tile tile)
+        private void VisualizeTileLine1(Tile t1, Tile t2, Tile t3)
         {
-            var initialCursorPosition = Console.GetCursorPosition();
+            Console.Write("┌─".Pastel(ConsoleColor.Gray));
+            VisualizeSide(t1.Up);
+            Console.Write("─┐".Pastel(ConsoleColor.Gray));
 
-            Console.Write($"┌───┐".Pastel(ConsoleColor.Gray));
-            //Console.Write($"│   │".Pastel(ConsoleColor.Gray));
-            Console.SetCursorPosition(initialCursorPosition.Left, initialCursorPosition.Top + 2);
-            Console.Write($"└───┘".Pastel(ConsoleColor.Gray));
+            Console.Write("┌─".Pastel(ConsoleColor.Gray));
+            VisualizeSide(t2.Up);
+            Console.Write("─┐".Pastel(ConsoleColor.Gray));
 
+            Console.Write("┌─".Pastel(ConsoleColor.Gray));
+            VisualizeSide(t3.Up);
+            Console.Write("─┐".Pastel(ConsoleColor.Gray));
+        }
 
+        private void VisualizeTileLine2(Tile t1, Tile t2, Tile t3)
+        {
+            VisualizeSide(t1.Left);
+            Console.Write("   ");
+            VisualizeSide(t1.Right);
 
-            Console.SetCursorPosition(initialCursorPosition.Left + 2, initialCursorPosition.Top);
-            VisualizeSide(tile.Up);
+            VisualizeSide(t2.Left);
+            Console.Write("   ");
+            VisualizeSide(t2.Right);
 
-            Console.SetCursorPosition(initialCursorPosition.Left, initialCursorPosition.Top + 1);
-            VisualizeSide(tile.Left);
+            VisualizeSide(t3.Left);
+            Console.Write("   ");
+            VisualizeSide(t3.Right);
+        }
 
-            Console.SetCursorPosition(initialCursorPosition.Left + 4, initialCursorPosition.Top + 1);
-            VisualizeSide(tile.Right);
+        private void VisualizeTileLine3(Tile t1, Tile t2, Tile t3)
+        {
+            Console.Write("└─".Pastel(ConsoleColor.Gray));
+            VisualizeSide(t1.Down);
+            Console.Write("─┘".Pastel(ConsoleColor.Gray));
 
-            Console.SetCursorPosition(initialCursorPosition.Left + 2, initialCursorPosition.Top + 2);
-            VisualizeSide(tile.Down);
+            Console.Write("└─".Pastel(ConsoleColor.Gray));
+            VisualizeSide(t2.Down);
+            Console.Write("─┘".Pastel(ConsoleColor.Gray));
+
+            Console.Write("└─".Pastel(ConsoleColor.Gray));
+            VisualizeSide(t3.Down);
+            Console.Write("─┘".Pastel(ConsoleColor.Gray));
         }
 
         private void VisualizeSide(Side side)
