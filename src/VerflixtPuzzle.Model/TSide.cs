@@ -1,18 +1,18 @@
 ﻿namespace VerflixtPuzzle.Model.TSide
 {
-    public abstract record Side
+    public record struct TortoiseSide(Shape Body, System.Drawing.Color Color) : ISide
     {
-        public abstract bool Fit(Side side);
-    }
-
-    public record TortoiseSide(Shape Body, System.Drawing.Color Color) : Side
-    {
-        public override bool Fit(Side side)
+        public bool Fit(ISide side)
         {
             if(side is TortoiseSide tortoiseSide)
-                return tortoiseSide.Body != Body && tortoiseSide.Color == Color;
+                return Fit(tortoiseSide);
 
             return false;
+        }
+
+        public bool Fit(TortoiseSide side)
+        {
+            return side.Body != Body && side.Color == Color;
         }
     }
 

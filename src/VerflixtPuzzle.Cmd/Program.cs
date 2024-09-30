@@ -13,7 +13,37 @@ vis.Visualize(puzzle);
 Console.WriteLine("Let's solve the puzzle: ");
 Console.WriteLine();
 
-Permutate(new Queue<int>(Enumerable.Range(0, 9)), new Stack<int>());
+//BenchmarkRunner.Run<PuzzleBenchmark>();
+
+//Permutate(new Queue<int>(Enumerable.Range(9, 0)), new Stack<int>());
+
+var orderedRange = Enumerable.Range(0, 9).OrderBy(i => i);
+var queue = new Queue<int>(orderedRange);
+
+ShowPermutations(queue, new Stack<int>());
+
+//RotateAndCheck(puzzle, [0, 1, 2,3,4,5,6,7,8], 0);
+
+
+void ShowPermutations(Queue<int> nums, Stack<int> stack)
+{
+    for (int i = 0; i < nums.Count; i++)
+    {
+        if (nums.TryDequeue(out int cur))
+        {
+            stack.Push(cur);
+            ShowPermutations(nums, stack);
+            stack.Pop();
+            nums.Enqueue(cur);
+        }
+    }
+
+    if (nums.Count == 0)
+    {
+        var order = stack.ToArray();
+        Console.WriteLine(string.Join(",", order));
+    }
+}
 
 void Permutate(Queue<int> nums, Stack<int> stack)
 {
@@ -31,30 +61,29 @@ void Permutate(Queue<int> nums, Stack<int> stack)
     if (nums.Count == 0)
     {
         var order = stack.ToArray();
-        puzzle.Permutate(order);
-        RotateAndCheck(puzzle, 0);
+        RotateAndCheck(puzzle, order, 0);
     }
 }
 
 Console.WriteLine("Search completed.");
 
-void RotateAndCheck(Puzzle puzzle1, int i)
+void RotateAndCheck(Puzzle puzzle1, int[] order, int i)
 {
     for (int j = 0; j < 4; j++)
     {
         if (puzzle1.TilesCount > i + 1)
         {
-            RotateAndCheck(puzzle1, i + 1);
+            RotateAndCheck(puzzle1, order,i + 1);
         }
 
-        if (puzzle1.IsSolved())
+        if (puzzle1.IsSolved(order))
         {
-            vis.Visualize(puzzle1);
-            var positionId = puzzle1.GetPositionUniqueId();
+            vis.Visualize(puzzle1, order);
+            var positionId = puzzle1.GetPositionUniqueId(order);
             Console.WriteLine($"position: {positionId}");
             Console.WriteLine();
         }
 
-        puzzle1.GetTile(i).Rotate();
+        puzzle1.GetTile(order[i]).Rotate();
     }
 }

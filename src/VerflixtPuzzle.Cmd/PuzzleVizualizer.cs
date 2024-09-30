@@ -7,35 +7,41 @@ namespace VerflixtPuzzle.Cmd
     public interface IPuzzleVisualizer
     {
         public void Visualize(Puzzle puzzle);
+        public void Visualize(Puzzle puzzle, int[] order);
     }
 
     public class PuzzleConsoleVisualizer : IPuzzleVisualizer
     {
         public void Visualize(Puzzle puzzle)
         {
+            Visualize(puzzle, puzzle.GetDefaultOrder());
+        }
+
+        public void Visualize(Puzzle puzzle, int[] tilesOrder)
+        {
             var initialCursorPosition = Console.GetCursorPosition();
 
-            VisualizeTileLine1(puzzle.GetTile(0), puzzle.GetTile(1), puzzle.GetTile(2));
+            VisualizeTileLine1(puzzle.GetTile(tilesOrder[0]), puzzle.GetTile(tilesOrder[1]), puzzle.GetTile(tilesOrder[2]));
             Console.WriteLine();
-            VisualizeTileLine2(puzzle.GetTile(0), puzzle.GetTile(1), puzzle.GetTile(2));
+            VisualizeTileLine2(puzzle.GetTile(tilesOrder[0]), puzzle.GetTile(tilesOrder[1]), puzzle.GetTile(tilesOrder[2]));
             Console.WriteLine();
-            VisualizeTileLine3(puzzle.GetTile(0), puzzle.GetTile(1), puzzle.GetTile(2));
+            VisualizeTileLine3(puzzle.GetTile(tilesOrder[0]), puzzle.GetTile(tilesOrder[1]), puzzle.GetTile(tilesOrder[2]));
 
             Console.WriteLine();
 
-            VisualizeTileLine1(puzzle.GetTile(3), puzzle.GetTile(4), puzzle.GetTile(5));
+            VisualizeTileLine1(puzzle.GetTile(tilesOrder[3]), puzzle.GetTile(tilesOrder[4]), puzzle.GetTile(tilesOrder[5]));
             Console.WriteLine();
-            VisualizeTileLine2(puzzle.GetTile(3), puzzle.GetTile(4), puzzle.GetTile(5));
+            VisualizeTileLine2(puzzle.GetTile(tilesOrder[3]), puzzle.GetTile(tilesOrder[4]), puzzle.GetTile(tilesOrder[5]));
             Console.WriteLine();
-            VisualizeTileLine3(puzzle.GetTile(3), puzzle.GetTile(4), puzzle.GetTile(5));
+            VisualizeTileLine3(puzzle.GetTile(tilesOrder[3]), puzzle.GetTile(tilesOrder[4]), puzzle.GetTile(tilesOrder[5]));
 
             Console.WriteLine();
 
-            VisualizeTileLine1(puzzle.GetTile(6), puzzle.GetTile(7), puzzle.GetTile(8));
+            VisualizeTileLine1(puzzle.GetTile(tilesOrder[6]), puzzle.GetTile(tilesOrder[7]), puzzle.GetTile(tilesOrder[8]));
             Console.WriteLine();
-            VisualizeTileLine2(puzzle.GetTile(6), puzzle.GetTile(7), puzzle.GetTile(8));
+            VisualizeTileLine2(puzzle.GetTile(tilesOrder[6]), puzzle.GetTile(tilesOrder[7]), puzzle.GetTile(tilesOrder[8]));
             Console.WriteLine();
-            VisualizeTileLine3(puzzle.GetTile(6), puzzle.GetTile(7), puzzle.GetTile(8));
+            VisualizeTileLine3(puzzle.GetTile(tilesOrder[6]), puzzle.GetTile(tilesOrder[7]), puzzle.GetTile(tilesOrder[8]));
 
             Console.WriteLine();
         }
@@ -85,7 +91,7 @@ namespace VerflixtPuzzle.Cmd
             Console.Write("─┘".Pastel(ConsoleColor.Gray));
         }
 
-        private void VisualizeSide(Side side)
+        private void VisualizeSide(ISide side)
         {
             if (side is TortoiseSide tortoiseSide)
                 Console.Write(tortoiseSide.Body == Shape.Head ? "H".Pastel(tortoiseSide.Color) : "T".Pastel(tortoiseSide.Color));
