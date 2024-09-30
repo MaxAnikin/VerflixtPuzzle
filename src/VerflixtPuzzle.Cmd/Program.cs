@@ -4,22 +4,39 @@ using VerflixtPuzzle.Cmd;
 using VerflixtPuzzle.Model;
 
 var builder = new PuzzleBuilder();
-var puzzle = builder.BuildTPuzzleSimple();
+var puzzle = builder.BuildTPuzzle();
 
 var vis = new PuzzleConsoleVisualizer();
 vis.Visualize(puzzle);
 
+
 Console.WriteLine("Let's solve the puzzle: ");
 Console.WriteLine();
 
-var positions = new HashSet<string>();
+Permutate(new Queue<int>(Enumerable.Range(0, 9)), new Stack<int>());
 
-puzzle.Permutate(new int[] {4, 1, 2, 3, 0, 5, 6, 7, 8 });
+void Permutate(Queue<int> nums, Stack<int> stack)
+{
+    for (int i = 0; i < nums.Count; i++)
+    {
+        if (nums.TryDequeue(out int cur))
+        {
+            stack.Push(cur);
+            Permutate(nums, stack);
+            stack.Pop();
+            nums.Enqueue(cur);
+        }
+    }
 
-RotateAndCheck(puzzle, 0);
+    if (nums.Count == 0)
+    {
+        var order = stack.ToArray();
+        puzzle.Permutate(order);
+        RotateAndCheck(puzzle, 0);
+    }
+}
 
 Console.WriteLine("Search completed.");
-
 
 void RotateAndCheck(Puzzle puzzle1, int i)
 {
@@ -34,11 +51,8 @@ void RotateAndCheck(Puzzle puzzle1, int i)
         {
             vis.Visualize(puzzle1);
             var positionId = puzzle1.GetPositionUniqueId();
-            if (positions.Add(positionId))
-            {
-                Console.WriteLine($"position: {positionId}");
-                Console.WriteLine();
-            }
+            Console.WriteLine($"position: {positionId}");
+            Console.WriteLine();
         }
 
         puzzle1.GetTile(i).Rotate();
