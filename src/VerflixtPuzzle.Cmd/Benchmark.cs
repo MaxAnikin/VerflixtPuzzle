@@ -9,12 +9,14 @@ namespace VerflixtPuzzle.Cmd
     public class PuzzleBenchmark
     {
         private Puzzle puzzle;
+        private OrderBasedStrategy  strategy;
 
         [GlobalSetup]
         public void Setup()
         {
             var builder = new PuzzleBuilder();
             puzzle = builder.BuildTPuzzle();
+            strategy = new OrderBasedStrategy();
         }
 
         //[Benchmark]
@@ -66,11 +68,21 @@ namespace VerflixtPuzzle.Cmd
             }
         }
 
-        private void RotateAndCheck(Puzzle puzzle1, int i)
+        void RotateAndCheck(Puzzle puzzle1, int[] order, int i = 0)
         {
             for (int j = 0; j < 4; j++)
             {
-                puzzle1.GetTile(0).Rotate();
+                if (puzzle1.TilesCount > i + 1)
+                {
+                    RotateAndCheck(puzzle1, order, i + 1);
+                }
+
+                if (strategy.IsSolved(puzzle1, order))
+                {
+                    Console.WriteLine($"Found solution: {string.Join(",", order)}");
+                }
+
+                puzzle1.GetTile(order[i]).Rotate();
             }
         }
     }

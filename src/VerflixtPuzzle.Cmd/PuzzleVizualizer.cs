@@ -4,19 +4,8 @@ using VerflixtPuzzle.Model.TSide;
 
 namespace VerflixtPuzzle.Cmd
 {
-    public interface IPuzzleVisualizer
+    public class PuzzleConsoleVisualizer
     {
-        public void Visualize(Puzzle puzzle);
-        public void Visualize(Puzzle puzzle, int[] order);
-    }
-
-    public class PuzzleConsoleVisualizer : IPuzzleVisualizer
-    {
-        public void Visualize(Puzzle puzzle)
-        {
-            Visualize(puzzle, puzzle.GetDefaultOrder());
-        }
-
         public void Visualize(Puzzle puzzle, int[] tilesOrder)
         {
             var initialCursorPosition = Console.GetCursorPosition();
@@ -64,15 +53,15 @@ namespace VerflixtPuzzle.Cmd
         private void VisualizeTileLine2(Tile t1, Tile t2, Tile t3)
         {
             VisualizeSide(t1.Left);
-            Console.Write("   ");
+            Console.Write($" {t1.Position} ");
             VisualizeSide(t1.Right);
 
             VisualizeSide(t2.Left);
-            Console.Write("   ");
+            Console.Write($" {t2.Position} ");
             VisualizeSide(t2.Right);
 
             VisualizeSide(t3.Left);
-            Console.Write("   ");
+            Console.Write($" {t3.Position} ");
             VisualizeSide(t3.Right);
         }
 

@@ -1,28 +1,11 @@
 ﻿namespace VerflixtPuzzle.Model;
 
-public interface IPuzzleIsSolvedStrategy
+public class OrderBasedStrategy
 {
-    bool IsSolved(Puzzle puzzle);
-    
-    bool IsSolved(Puzzle puzzle, int[] tilesOrder);
-}
-
-public class DefaultIsSolvedStrategy : IPuzzleIsSolvedStrategy
-{
-    public bool IsSolved(Puzzle puzzle)
-    {
-        // all tiles considered as matrix by default
-        // tilesOrder[0] tilesOrder[1] tilesOrder[2]
-        // tilesOrder[3] tilesOrder[4] tilesOrder[5]
-        // tilesOrder[6] tilesOrder[7] tilesOrder[8]
-
-        return IsSolved(puzzle, puzzle.GetDefaultOrder());
-    }
-
     public bool IsSolved(Puzzle puzzle, int[] tilesOrder)
     {
-        if (puzzle == null) throw new ArgumentNullException(nameof(puzzle));
-
+        if (puzzle == null) 
+            throw new ArgumentNullException(nameof(puzzle));
 
         if (!puzzle.GetTile(tilesOrder[0]).Right.Fit(puzzle.GetTile(tilesOrder[1]).Left))
             return false;

@@ -1,12 +1,21 @@
 ﻿namespace VerflixtPuzzle.Model;
 
-public class Tile(ISide left, ISide up, ISide right, ISide down)
+public class Tile
 {
-    public ISide Up { get; private set; } = up ?? throw new ArgumentNullException(nameof(up));
-    public ISide Down { get; private set; } = down ?? throw new ArgumentNullException(nameof(down));
-    public ISide Left { get; private set; } = left ?? throw new ArgumentNullException(nameof(left));
-    public ISide Right { get; private set; } = right ?? throw new ArgumentNullException(nameof(right));
-    public int PositionId { get; private set; } = 0;
+    public ISide Left { get; set; }
+    public ISide Up { get; set; }
+    public ISide Right { get; set; }
+    public ISide Down { get; set; }
+    public int Position { get; private set; } = 0;
+
+    public Tile(ISide left, ISide up, ISide right, ISide down)
+    {
+        Left = left;
+        Up = up;
+        Right = right;
+        Down = down;
+        Position = 0;
+    }
 
     public void Rotate()
     {
@@ -18,17 +27,17 @@ public class Tile(ISide left, ISide up, ISide right, ISide down)
         Down = Right;
         Right = u;
 
-        UpdatePositionId(1);
+        UpdatePosition(1);
     }
 
-    private void UpdatePositionId(int direction)
+    private void UpdatePosition(int direction)
     {
-        PositionId += direction;
+        Position += direction;
 
-        if (PositionId == 4)
-            PositionId = 0;
+        if (Position == 4)
+            Position = 0;
 
-        if (PositionId == -1)
-            PositionId = 3;
+        if (Position == -1)
+            Position = 3;
     }
 }
