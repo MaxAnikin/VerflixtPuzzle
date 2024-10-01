@@ -1,13 +1,14 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using BenchmarkDotNet.Running;
 using VerflixtPuzzle.Cmd;
 using VerflixtPuzzle.Model;
 
 var builder = new PuzzleBuilder();
 var puzzle = builder.BuildTPuzzle();
 
-var vis = new PuzzleConsoleVisualizer();
-vis.Visualize(puzzle);
+//var vis = new PuzzleConsoleVisualizer();
+//vis.Visualize(puzzle);
 
 
 Console.WriteLine("Let's solve the puzzle: ");
@@ -17,13 +18,40 @@ Console.WriteLine();
 
 //Permutate(new Queue<int>(Enumerable.Range(9, 0)), new Stack<int>());
 
-var orderedRange = Enumerable.Range(0, 9).OrderBy(i => i);
-var queue = new Queue<int>(orderedRange);
+//var orderedRange = Enumerable.Range(0, 9).OrderBy(i => i);
+//var queue = new Queue<int>(orderedRange);
 
-ShowPermutations(queue, new Stack<int>());
+PermutateRec(null, null);
+
+//ShowPermutations(queue, new Stack<int>());
 
 //RotateAndCheck(puzzle, [0, 1, 2,3,4,5,6,7,8], 0);
 
+void PermutateRec(Queue<int>? nums, Stack<int>? res)
+{
+    nums ??= new Queue<int>(Enumerable.Range(0, 9).OrderByDescending(t => t));
+    res ??= new Stack<int>(nums.Count);
+
+    if (nums.Count == 0)
+        return;
+
+    for (int i = 0; i < nums.Count; i++)
+    {
+        int cur = nums.Dequeue();
+        res.Push(cur);
+        PermutateRec(nums, res);
+        res.Pop();
+        nums.Enqueue(cur);
+    }
+}
+
+void PermutateLoop(int[] range)
+{
+    for (int i = 0; i < range.Length; i++)
+    {
+
+    }
+}
 
 void ShowPermutations(Queue<int> nums, Stack<int> stack)
 {
@@ -73,12 +101,12 @@ void RotateAndCheck(Puzzle puzzle1, int[] order, int i)
     {
         if (puzzle1.TilesCount > i + 1)
         {
-            RotateAndCheck(puzzle1, order,i + 1);
+            RotateAndCheck(puzzle1, order, i + 1);
         }
 
         if (puzzle1.IsSolved(order))
         {
-            vis.Visualize(puzzle1, order);
+            //vis.Visualize(puzzle1, order);
             var positionId = puzzle1.GetPositionUniqueId(order);
             Console.WriteLine($"position: {positionId}");
             Console.WriteLine();
