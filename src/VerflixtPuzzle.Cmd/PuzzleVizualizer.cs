@@ -1,5 +1,6 @@
 ﻿using Pastel;
 using VerflixtPuzzle.Model;
+using VerflixtPuzzle.Model.Puzzle;
 using VerflixtPuzzle.Model.TSide;
 
 namespace VerflixtPuzzle.Cmd
@@ -46,7 +47,7 @@ namespace VerflixtPuzzle.Cmd
             Console.WriteLine();
         }
 
-        private void VisualizeTileLine1(Tile t1, Tile t2, Tile t3)
+        private void VisualizeTileLine1(SquareTile t1, SquareTile t2, SquareTile t3)
         {
             Console.Write("┌─".Pastel(ConsoleColor.Gray));
             VisualizeSide(t1.Up);
@@ -61,7 +62,7 @@ namespace VerflixtPuzzle.Cmd
             Console.Write("─┐".Pastel(ConsoleColor.Gray));
         }
 
-        private void VisualizeTileLine2(Tile t1, Tile t2, Tile t3)
+        private void VisualizeTileLine2(SquareTile t1, SquareTile t2, SquareTile t3)
         {
             VisualizeSide(t1.Left);
             Console.Write("   ");
@@ -76,7 +77,7 @@ namespace VerflixtPuzzle.Cmd
             VisualizeSide(t3.Right);
         }
 
-        private void VisualizeTileLine3(Tile t1, Tile t2, Tile t3)
+        private void VisualizeTileLine3(SquareTile t1, SquareTile t2, SquareTile t3)
         {
             Console.Write("└─".Pastel(ConsoleColor.Gray));
             VisualizeSide(t1.Down);

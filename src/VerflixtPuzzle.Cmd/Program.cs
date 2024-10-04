@@ -2,30 +2,65 @@
 
 using BenchmarkDotNet.Running;
 using VerflixtPuzzle.Cmd;
-using VerflixtPuzzle.Model;
+using VerflixtPuzzle.Model.Puzzle;
 
 var builder = new PuzzleBuilder();
-var puzzle = builder.BuildTPuzzle();
+var puzzle = builder.BuildTPuzzleSimple();
 
-//var vis = new PuzzleConsoleVisualizer();
-//vis.Visualize(puzzle);
-
+var vis = new PuzzleConsoleVisualizer();
+vis.Visualize(puzzle);
 
 Console.WriteLine("Let's solve the puzzle: ");
 Console.WriteLine();
 
+//GeneratePermutations([0, 1, 2, 3, 4, 5, 6, 7, 8], 9);
+
 //BenchmarkRunner.Run<PuzzleBenchmark>();
 
-//Permutate(new Queue<int>(Enumerable.Range(9, 0)), new Stack<int>());
+
+Permutate(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8], 9);
 
 //var orderedRange = Enumerable.Range(0, 9).OrderBy(i => i);
 //var queue = new Queue<int>(orderedRange);
 
-PermutateRec(null, null);
+//PermutateRec(null, null);
 
 //ShowPermutations(queue, new Stack<int>());
 
 //RotateAndCheck(puzzle, [0, 1, 2,3,4,5,6,7,8], 0);
+
+static void GeneratePermutations(int[] arr, int size)
+{
+    if (size == 1)
+    {
+        Console.WriteLine(string.Join(", ", arr));
+        return;
+    }
+
+    // Генерируем перестановки рекурсивно
+    for (int i = 0; i < size; i++)
+    {
+        GeneratePermutations(arr, size - 1);
+
+        // Если размер подмассива четный, меняем местами i-й и последний элемент
+        if (size % 2 == 0)
+        {
+            Swap(ref arr[i], ref arr[size - 1]);
+        }
+        // Если размер подмассива нечетный, меняем первый и последний элементы
+        else
+        {
+            Swap(ref arr[0], ref arr[size - 1]);
+        }
+    }
+}
+
+static void Swap(ref int a, ref int b)
+{
+    int temp = a;
+    a = b;
+    b = temp;
+}
 
 void PermutateRec(Queue<int>? nums, Stack<int>? res)
 {
@@ -73,23 +108,29 @@ void ShowPermutations(Queue<int> nums, Stack<int> stack)
     }
 }
 
-void Permutate(Queue<int> nums, Stack<int> stack)
+void Permutate(Puzzle puzzle1, int[] arr, int size)
 {
-    for (int i = 0; i < nums.Count; i++)
+    if (size == 1)
     {
-        if (nums.TryDequeue(out int cur))
-        {
-            stack.Push(cur);
-            Permutate(nums, stack);
-            stack.Pop();
-            nums.Enqueue(cur);
-        }
+        RotateAndCheck(puzzle1, arr, 0);
+        return;
     }
 
-    if (nums.Count == 0)
+    // Генерируем перестановки рекурсивно
+    for (int i = 0; i < size; i++)
     {
-        var order = stack.ToArray();
-        RotateAndCheck(puzzle, order, 0);
+        Permutate(puzzle1, arr, size - 1);
+
+        // Если размер подмассива четный, меняем местами i-й и последний элемент
+        if (size % 2 == 0)
+        {
+            Swap(ref arr[i], ref arr[size - 1]);
+        }
+        // Если размер подмассива нечетный, меняем первый и последний элементы
+        else
+        {
+            Swap(ref arr[0], ref arr[size - 1]);
+        }
     }
 }
 

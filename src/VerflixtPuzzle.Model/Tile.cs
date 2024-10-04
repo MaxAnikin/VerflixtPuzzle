@@ -1,23 +1,17 @@
 ﻿namespace VerflixtPuzzle.Model;
 
-public class Tile(ISide left, ISide up, ISide right, ISide down)
+public class SquareTile(ISide[] sides) : NSideTile(sides)
 {
-    public ISide Up { get; private set; } = up ?? throw new ArgumentNullException(nameof(up));
-    public ISide Down { get; private set; } = down ?? throw new ArgumentNullException(nameof(down));
-    public ISide Left { get; private set; } = left ?? throw new ArgumentNullException(nameof(left));
-    public ISide Right { get; private set; } = right ?? throw new ArgumentNullException(nameof(right));
+    public ISide Up => GetSide(1, PositionId);
+    public ISide Down => GetSide(3, PositionId);
+    public ISide Left => GetSide(0, PositionId);
+    public ISide Right => GetSide(2, PositionId);
+
     public int PositionId { get; private set; } = 0;
 
     public void Rotate()
     {
         // clockwise rotation
-
-        var u = Up;
-        Up = Left;
-        Left = Down;
-        Down = Right;
-        Right = u;
-
         UpdatePositionId(1);
     }
 
@@ -30,5 +24,16 @@ public class Tile(ISide left, ISide up, ISide right, ISide down)
 
         if (PositionId == -1)
             PositionId = 3;
+    }
+}
+
+public class NSideTile(ISide[] sides)
+{
+    public ISide GetSide(int index, int position)
+    {
+        if (position < 0 || position > sides.Length)
+            throw new ArgumentOutOfRangeException(nameof(position));
+
+        return sides[index + position];
     }
 }

@@ -2,9 +2,9 @@
 {
     internal class TilesOrder
     {
-        private Tile[] _tiles;
+        private SquareTile[] _tiles;
 
-        public TilesOrder(Tile[] tiles)
+        public TilesOrder(SquareTile[] tiles)
         {
             if (tiles == null)
                 throw new ArgumentNullException(nameof(tiles));
