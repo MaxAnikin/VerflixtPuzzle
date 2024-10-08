@@ -2,38 +2,44 @@
 
 public class SquareTile(ISide[] sides) : NSideTile(sides)
 {
-    public ISide Up => GetSide(1, PositionId);
-    public ISide Down => GetSide(3, PositionId);
-    public ISide Left => GetSide(0, PositionId);
-    public ISide Right => GetSide(2, PositionId);
+    public ISide Up => GetSide(1, Position);
+    public ISide Down => GetSide(3, Position);
+    public ISide Left => GetSide(0, Position);
+    public ISide Right => GetSide(2, Position);
 
-    public int PositionId { get; private set; } = 0;
+    public int Position { get; private set; } = 0;
 
     public void Rotate()
     {
         // clockwise rotation
-        UpdatePositionId(1);
+        UpdatePosition(1);
     }
 
-    private void UpdatePositionId(int direction)
+    private void UpdatePosition(int direction)
     {
-        PositionId += direction;
+        Position += direction;
 
-        if (PositionId == 4)
-            PositionId = 0;
+        if (Position == Sides.Length)
+            Position = 0;
 
-        if (PositionId == -1)
-            PositionId = 3;
+        if (Position == -1)
+            Position = Sides.Length - 1;
     }
 }
 
 public class NSideTile(ISide[] sides)
 {
+    protected readonly ISide[] Sides = sides;
+
     public ISide GetSide(int index, int position)
     {
-        if (position < 0 || position > sides.Length)
+        if (position < 0 || position > Sides.Length)
             throw new ArgumentOutOfRangeException(nameof(position));
 
-        return sides[index + position];
+        var i = index + position;
+        if (i > Sides.Length - 1)
+            i -= Sides.Length;
+
+        return Sides[i];
     }
 }

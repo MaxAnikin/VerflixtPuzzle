@@ -1,11 +1,11 @@
 ﻿namespace VerflixtPuzzle.Model;
 
-public interface IPuzzleIsSolvedStrategy
+public interface IPuzzleResolutionStrategy
 {
     bool IsSolved(Puzzle.Puzzle puzzle);
 }
 
-public class DefaultIsSolvedStrategy(int[] order) : IPuzzleIsSolvedStrategy
+public class DefaultIsSolvedStrategy(int[] order) : IPuzzleResolutionStrategy
 {
     public bool IsSolved(Puzzle.Puzzle puzzle)
     {
@@ -51,16 +51,3 @@ public class DefaultIsSolvedStrategy(int[] order) : IPuzzleIsSolvedStrategy
         return true;
     }
 }
-
-//public class OrderedPositionIsSolvedStrategy(int[] order, int[] positions) : IPuzzleIsSolvedStrategy
-//{
-//    public bool IsSolved(Puzzle puzzle)
-//    {
-//        if (puzzle == null) throw new ArgumentNullException(nameof(puzzle));
-
-//        for (int i = 0; i < puzzle.TilesCount; i++)
-//        {
-//            puzzle.
-//        }
-//    }
-//}
