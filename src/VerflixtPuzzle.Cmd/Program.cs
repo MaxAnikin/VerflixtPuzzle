@@ -14,11 +14,11 @@ Console.WriteLine("Let's solve the puzzle: ");
 Console.WriteLine();
 
 
-//BenchmarkRunner.Run<PuzzleBenchmark>();
+BenchmarkRunner.Run<PuzzleBenchmark>();
 
 //RotateAndCheck(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
 
-Permutate(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8], 9, ((puzzle1, arr) => RotateAndCheck(puzzle1, arr)));
+//Permutate(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8], 9, ((puzzle1, arr) => RotateAndCheck(puzzle1, arr)));
 
 Console.WriteLine("Search completed.");
 
@@ -37,7 +37,7 @@ void Permutate(Puzzle puzzle1, int[] arr, int size, Action<Puzzle, int[]> action
         if (size % 2 == 0)
         {
             (arr[i], arr[size - 1]) = (arr[size - 1], arr[i]);
-            puzzle1.Swap(arr[i], arr[size - 1]);
+            puzzle1.Swap(arr[i], arr[size - 1]);        
         }
         else
         {
@@ -47,24 +47,27 @@ void Permutate(Puzzle puzzle1, int[] arr, int size, Action<Puzzle, int[]> action
     }
 }
 
-void RotateAndCheck(Puzzle puzzle1, int[] tiles)
-{
-    for (int j = 0; j < 4; j++)
-    {
-        if (puzzle1.TilesCount > i + 1)
-        {
-            RotateAndCheck(puzzle1, order, i + 1);
-        }
+//void RotateAndCheck(Puzzle puzzle1, int[] tiles)
+//{
+//    for (int i = 0; i < tiles.Length; i++)
+//    {
+//        for (int j = 0; j < 4; j++)
+//        {
+//            if (puzzle1.TilesCount > i + 1)
+//            {
+//                RotateAndCheck(puzzle1, tiles, i + 1);
+//            }
 
-        if (puzzle.IsSolved)
-        {
-            Console.WriteLine($"Found solution: {string.Join(",", order)}");
-            vis.Visualize(puzzle1, order);
-        }
+//            if (puzzle.IsSolved)
+//            {
+//                Console.WriteLine($"Found solution: {string.Join(",", order)}");
+//                vis.Visualize(puzzle1, order);
+//            }
 
-        puzzle1.GetTile(order[i]).Rotate();
-    }
-}
+//            puzzle1.GetTile(order[i]).Rotate();
+//        }
+//    }
+//}
 
 //static void Swap(ref int a, ref int b)
 //{

@@ -41,10 +41,23 @@ namespace VerflixtPuzzle.Cmd
         //    GeneratePermutations([0, 1, 2, 3, 4, 5, 6, 7, 8], 9);
         //}
 
+        //[Benchmark]
+        //public void GeneratePermutationsSpan()
+        //{
+        //    GeneratePermutationsSpan(new Span<int>([0, 1, 2, 3, 4, 5, 6, 7, 8]), 9);
+        //}
+
         [Benchmark]
         public void RotateAndCheck()
         {
-            RotateAndCheck(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+            var str = new DefaultIsSolvedStrategy([]);
+            RotateAndCheck(puzzle, str, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+        }
+
+        [Benchmark]
+        public void RotateAndCheck2()
+        {
+            RotateAndCheck2(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
         }
 
         //[Benchmark]
@@ -76,18 +89,39 @@ namespace VerflixtPuzzle.Cmd
 
                 if (size % 2 == 0)
                 {
-                    Swap(ref arr[i], ref arr[size - 1]);
+                    (arr[i], arr[size - 1]) = (arr[size - 1], arr[i]);
+                    puzzle.Swap(arr[i], arr[size - 1]);
                 }
                 else
                 {
-                    Swap(ref arr[0], ref arr[size - 1]);
+                    (arr[0], arr[size - 1]) = (arr[size - 1], arr[0]);
+                    puzzle.Swap(arr[0], arr[size - 1]);
                 }
             }
         }
 
-        void Swap(ref int a, ref int b)
+        void GeneratePermutationsSpan(Span<int> arr, int size)
         {
-            (a, b) = (b, a);
+            if (size == 1)
+            {
+                return;
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                GeneratePermutationsSpan(arr, size - 1);
+
+                if (size % 2 == 0)
+                {
+                    (arr[i], arr[size - 1]) = (arr[size - 1], arr[i]);
+                    puzzle.Swap(arr[i], arr[size - 1]);
+                }
+                else
+                {
+                    (arr[0], arr[size - 1]) = (arr[size - 1], arr[0]);
+                    puzzle.Swap(arr[0], arr[size - 1]);
+                }
+            }
         }
 
         void PermutateRec(Queue<int>? nums, Stack<int>? res)
@@ -115,14 +149,27 @@ namespace VerflixtPuzzle.Cmd
             }
         }
 
-        void RotateAndCheck(Puzzle puzzle1, int[] order, int i = 0)
+        void RotateAndCheck(Puzzle puzzle1, DefaultIsSolvedStrategy str, int[] order, int i = 0)
         {
             for (int j = 0; j < 4; j++)
             {
                 if (puzzle1.TilesCount > i + 1)
-                    RotateAndCheck(puzzle1, order, i + 1);
+                    RotateAndCheck(puzzle1, str, order, i + 1);
 
-                new DefaultIsSolvedStrategy(order).IsSolved(puzzle1, order[i]);
+                str.IsSolved(puzzle1, order);
+
+                puzzle1.GetTile(order[i]).Rotate();
+            }
+        }
+
+        void RotateAndCheck2(Puzzle puzzle1, int[] order, int i = 0)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (puzzle1.TilesCount > i + 1)
+                    RotateAndCheck2(puzzle1, order, i + 1);
+
+                puzzle1.SolveOrder(order, []);
 
                 puzzle1.GetTile(order[i]).Rotate();
             }

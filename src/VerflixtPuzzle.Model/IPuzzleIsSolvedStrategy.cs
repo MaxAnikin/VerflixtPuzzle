@@ -7,10 +7,17 @@ public interface IPuzzleResolutionStrategy
 
 public class DefaultIsSolvedStrategy(int[] order) : IPuzzleResolutionStrategy
 {
+    public int[] Order { get; } = order;
+
+
     public bool IsSolved(Puzzle.Puzzle puzzle)
     {
-        if (puzzle == null) throw new ArgumentNullException(nameof(puzzle));
+        return IsSolved(puzzle, Order);
+    }
 
+    public bool IsSolved(Puzzle.Puzzle puzzle, int[] order)
+    {
+        if (puzzle == null) throw new ArgumentNullException(nameof(puzzle));
 
         if (!puzzle.GetTile(order[0]).Right.Fit(puzzle.GetTile(order[1]).Left))
             return false;

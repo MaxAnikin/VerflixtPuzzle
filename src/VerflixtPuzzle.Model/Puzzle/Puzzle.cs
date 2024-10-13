@@ -16,13 +16,13 @@
             if (tiles.Length != 9)
                 throw new ArgumentOutOfRangeException(nameof(tiles), "Number of tiles be 9.");
             
-            _resolutionStrategy = new DefaultIsSolvedStrategy(Enumerable.Range(0, TilesCount).ToArray());
-
             _initialSquareTiles = new SquareTile[tiles.Length];
             tiles.CopyTo(_initialSquareTiles, 0);
 
             _currentSquareTiles = new SquareTile[tiles.Length];
             tiles.CopyTo(_currentSquareTiles, 0);
+
+            _resolutionStrategy = new DefaultIsSolvedStrategy(Enumerable.Range(0, TilesCount).ToArray());
 
             IsSolved = CheckIsSolved();
         }
@@ -44,6 +44,22 @@
         public void Swap(int index1, int index2)
         {
             (_currentSquareTiles[index1], _currentSquareTiles[index2]) = (_currentSquareTiles[index2], _currentSquareTiles[index1]);
+        }
+
+        public bool SolveOrder(Span<int> order, int[] startCheck)
+        {
+            return RotateAndSolve(order, startCheck);
+        }
+
+        private bool RotateAndSolve(Span<int> order, int[] startCheck)
+        {
+            for (int i = 0; i < order.Length; i++)
+            {
+                if(!CheckTile(order[i]))
+                    return false;
+            }
+
+            return true;
         }
 
         private bool CheckTile(int i) => i switch
