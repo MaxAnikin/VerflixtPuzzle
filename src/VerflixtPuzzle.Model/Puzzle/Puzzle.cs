@@ -4,7 +4,7 @@
     {
         public bool IsSolved { get; private set; }
 
-        private readonly IPuzzleResolutionStrategy _resolutionStrategy;
+        private readonly DefaultIsSolvedStrategy _resolutionStrategy;
         private readonly SquareTile[] _initialSquareTiles;
         private readonly SquareTile[] _currentSquareTiles;
 
@@ -35,10 +35,32 @@
             _ => throw new ArgumentOutOfRangeException(nameof(index), "Index must be between 0 and 8."),
         };
 
-        public void RotateTile(int tileIndex)
+        public void Permutate(Action<Puzzle, int[]> onNewPermutationAction)
         {
-            GetTile(tileIndex).Rotate();
-            IsSolved = CheckTile(tileIndex) && CheckIsSolved();
+            Permutate(Enumerable.Range(0, TilesCount).ToArray(), TilesCount, onNewPermutationAction);
+        }
+
+        private void Permutate(int[] order, int size, Action<Puzzle, int[]> onNewPermutationAction)
+        {
+            if (size == 1)
+            {
+                onNewPermutationAction(this, order);
+                return;
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                Permutate(order, size - 1, onNewPermutationAction);
+
+                if (size % 2 == 0)
+                {
+                    (order[i], order[size - 1]) = (order[size - 1], order[i]);
+                }
+                else
+                {
+                    (order[0], order[size - 1]) = (order[size - 1], order[0]);
+                }
+            }
         }
 
         public void Swap(int index1, int index2)
@@ -46,20 +68,22 @@
             (_currentSquareTiles[index1], _currentSquareTiles[index2]) = (_currentSquareTiles[index2], _currentSquareTiles[index1]);
         }
 
-        public bool SolveOrder(Span<int> order, int[] startCheck)
+        public void RotateAndSolve(int[] order, int[] startCheck, int i, Action<Puzzle, int[]> onSolvedAction)
         {
-            return RotateAndSolve(order, startCheck);
-        }
-
-        private bool RotateAndSolve(Span<int> order, int[] startCheck)
-        {
-            for (int i = 0; i < order.Length; i++)
+            for (int j = 0; j < 4; j++)
             {
-                if(!CheckTile(order[i]))
-                    return false;
-            }
+                if (TilesCount > i + 1)
+                {
+                    RotateAndSolve(order, startCheck, i + 1, onSolvedAction);
+                }
 
-            return true;
+                if (_resolutionStrategy.IsSolved(this, order))
+                {
+                    onSolvedAction(this, order);
+                }
+
+                GetTile(order[i]).Rotate();
+            }
         }
 
         private bool CheckTile(int i) => i switch

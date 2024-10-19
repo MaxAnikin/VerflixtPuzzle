@@ -23,11 +23,11 @@ namespace VerflixtPuzzle.Cmd
         //    RotateAndCheck(puzzle, 6);
         //}
 
-        //[Benchmark]
-        //public void PermutateRec()
-        //{
-        //    PermutateRec(null, null);
-        //}
+        [Benchmark]
+        public void Permutate()
+        {
+            puzzle.Permutate((puzzle1, order) => {});
+        }
 
         //[Benchmark]
         //public void PermutateLoop()
@@ -47,18 +47,18 @@ namespace VerflixtPuzzle.Cmd
         //    GeneratePermutationsSpan(new Span<int>([0, 1, 2, 3, 4, 5, 6, 7, 8]), 9);
         //}
 
-        [Benchmark]
-        public void RotateAndCheck()
-        {
-            var str = new DefaultIsSolvedStrategy([]);
-            RotateAndCheck(puzzle, str, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
-        }
+        //[Benchmark]
+        //public void RotateAndCheck()
+        //{
+        //    var str = new DefaultIsSolvedStrategy([]);
+        //    RotateAndCheck(puzzle, str, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+        //}
 
-        [Benchmark]
-        public void RotateAndCheck2()
-        {
-            RotateAndCheck2(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
-        }
+        //[Benchmark]
+        //public void RotateAndCheck2()
+        //{
+        //    RotateAndCheck2(puzzle, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+        //}
 
         //[Benchmark]
         //public void IsSolved()
@@ -168,8 +168,6 @@ namespace VerflixtPuzzle.Cmd
             {
                 if (puzzle1.TilesCount > i + 1)
                     RotateAndCheck2(puzzle1, order, i + 1);
-
-                puzzle1.SolveOrder(order, []);
 
                 puzzle1.GetTile(order[i]).Rotate();
             }
