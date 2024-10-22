@@ -3,7 +3,6 @@
     public class Puzzle
     {
         private readonly SquareTile[] _initialSquareTiles;
-        private readonly SquareTile[] _currentSquareTiles;
 
         public Puzzle(SquareTile[] tiles)
         {
@@ -15,16 +14,13 @@
 
             _initialSquareTiles = new SquareTile[tiles.Length];
             tiles.CopyTo(_initialSquareTiles, 0);
-
-            _currentSquareTiles = new SquareTile[tiles.Length];
-            tiles.CopyTo(_currentSquareTiles, 0);
         }
 
         public int TilesCount => _initialSquareTiles.Length;
 
         public SquareTile GetTile(int index) => index switch
         {
-            >= 0 and <= 8 => _currentSquareTiles[index],
+            >= 0 and <= 8 => _initialSquareTiles[index],
             _ => throw new ArgumentOutOfRangeException(nameof(index), "Index must be between 0 and 8."),
         };
 
@@ -37,7 +33,7 @@
         {
             if (size == 1)
             {
-                RotateAndSolve(order, [], size, onSolvedAction);
+                RotateAndSolveCross(order, [], size, onSolvedAction);
                 return;
             }
 
@@ -60,7 +56,7 @@
         {
             for (int j = 0; j < 4; j++)
             {
-                if (TilesCount > i + 1)
+                if (order.Length > i + 1)
                 {
                     RotateAndSolve(order, startCheck, i + 1, onSolvedAction);
                 }
@@ -73,6 +69,99 @@
 
                 GetTile(order[i]).Rotate();
             }
+        }
+
+        public void RotateAndSolveCross(int[] order, int[] startCheck, int i, Action<Puzzle, int[]> onSolvedAction)
+        {
+            if(!RotateAndSolveCrossOnly(order, [order[1], order[3], order[4], order[5], order[7]], 0))
+                return;
+
+            if (RotateAndSolveRest(order, [order[0], order[2], order[6], order[8]], 0))
+                onSolvedAction(this, order);
+        }
+
+        private bool RotateAndSolveRest(int[] order, int[] restOrder, int i)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (restOrder.Length > i + 1)
+                {
+                    if (RotateAndSolveRest(order, restOrder, i + 1))
+                        return true;
+                }
+
+                if (IsRestSolved(order))
+                    return true;
+
+                GetTile(restOrder[i]).Rotate();
+            }
+
+            return false;
+        }
+
+        private bool RotateAndSolveCrossOnly(int[] order, int[] crossOrder, int i)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (crossOrder.Length > i + 1)
+                {
+                    if(RotateAndSolveCrossOnly(order, crossOrder, i + 1))
+                        return true;
+                }
+
+                if (IsCrossSolved(order))
+                    return true;
+
+                GetTile(crossOrder[i]).Rotate();
+            }
+
+            return false;
+        }
+
+        private bool IsRestSolved(int[] order)
+        {
+            if (!GetTile(order[0]).Down.Fit(GetTile(order[3]).Up))
+                return false;
+
+            if (!GetTile(order[0]).Right.Fit(GetTile(order[1]).Left))
+                return false;
+
+            if (!GetTile(order[1]).Right.Fit(GetTile(order[2]).Left))
+                return false;
+
+            if (!GetTile(order[2]).Down.Fit(GetTile(order[5]).Up))
+                return false;
+
+            if (!GetTile(order[3]).Down.Fit(GetTile(order[6]).Up))
+                return false;
+
+            if (!GetTile(order[5]).Down.Fit(GetTile(order[8]).Up))
+                return false;
+
+            if (!GetTile(order[6]).Right.Fit(GetTile(order[7]).Left))
+                return false;
+
+            if (!GetTile(order[7]).Right.Fit(GetTile(order[8]).Left))
+                return false;
+
+            return true;
+        }
+
+        private bool IsCrossSolved(int[] order)
+        {
+            if (!GetTile(order[1]).Down.Fit(GetTile(order[4]).Up))
+                return false;
+
+            if (!GetTile(order[3]).Right.Fit(GetTile(order[4]).Left))
+                return false;
+
+            if (!GetTile(order[4]).Right.Fit(GetTile(order[5]).Left))
+                return false;
+
+            if (!GetTile(order[4]).Down.Fit(GetTile(order[7]).Up))
+                return false;
+
+            return true;
         }
 
         private bool IsSolved(int[] order, int startIndex)
@@ -135,21 +224,21 @@
 
         private bool CheckTile(int i) => i switch
         {
-            0 => GetTile(0).Right.Fit(GetTile(1).Left) && GetTile(0).Down.Fit(GetTile(3).Up),
-            1 => GetTile(1).Left.Fit(GetTile(0).Right) && GetTile(1).Down.Fit(GetTile(4).Up) && GetTile(1).Right.Fit(GetTile(2).Left),
-            2 => GetTile(2).Left.Fit(GetTile(1).Right) && GetTile(2).Down.Fit(GetTile(5).Up),
-            3 => GetTile(3).Up.Fit(GetTile(0).Down) && GetTile(3).Right.Fit(GetTile(4).Left) && GetTile(3).Down.Fit(GetTile(6).Up),
-            4 => GetTile(4).Left.Fit(GetTile(3).Right) && GetTile(4).Up.Fit(GetTile(1).Down) && GetTile(4).Right.Fit(GetTile(5).Left) && GetTile(4).Down.Fit(GetTile(7).Up),
-            5 => GetTile(5).Left.Fit(GetTile(4).Right) && GetTile(5).Up.Fit(GetTile(3).Down) && GetTile(5).Down.Fit(GetTile(8).Up),
-            6 => GetTile(6).Up.Fit(GetTile(3).Down) && GetTile(6).Right.Fit(GetTile(7).Left),
-            7 => GetTile(7).Left.Fit(GetTile(6).Right) && GetTile(7).Up.Fit(GetTile(4).Down) && GetTile(7).Right.Fit(GetTile(8).Left),
-            8 => GetTile(8).Left.Fit(GetTile(7).Right) && GetTile(8).Up.Fit(GetTile(5).Down),
+            0 => GetTile(i).Right.Fit(GetTile(1).Left) && GetTile(i).Down.Fit(GetTile(3).Up),
+            1 => GetTile(i).Left.Fit(GetTile(0).Right) && GetTile(i).Down.Fit(GetTile(4).Up) && GetTile(i).Right.Fit(GetTile(2).Left),
+            2 => GetTile(i).Left.Fit(GetTile(1).Right) && GetTile(i).Down.Fit(GetTile(5).Up),
+            3 => GetTile(i).Up.Fit(GetTile(0).Down) && GetTile(i).Right.Fit(GetTile(4).Left) && GetTile(i).Down.Fit(GetTile(6).Up),
+            4 => GetTile(i).Left.Fit(GetTile(3).Right) && GetTile(i).Up.Fit(GetTile(1).Down) && GetTile(i).Right.Fit(GetTile(5).Left) && GetTile(i).Down.Fit(GetTile(7).Up),
+            5 => GetTile(i).Left.Fit(GetTile(4).Right) && GetTile(i).Up.Fit(GetTile(3).Down) && GetTile(i).Down.Fit(GetTile(8).Up),
+            6 => GetTile(i).Up.Fit(GetTile(3).Down) && GetTile(i).Right.Fit(GetTile(7).Left),
+            7 => GetTile(i).Left.Fit(GetTile(6).Right) && GetTile(i).Up.Fit(GetTile(4).Down) && GetTile(i).Right.Fit(GetTile(8).Left),
+            8 => GetTile(i).Left.Fit(GetTile(7).Right) && GetTile(i).Up.Fit(GetTile(5).Down),
             _ => false
         };
 
         private bool CheckIsSolved()
         {
-            for (int i = 0; i < _currentSquareTiles.Length; i++)
+            for (int i = 0; i < _initialSquareTiles.Length; i++)
             {
                 if (!CheckTile(i))
                     return false;
