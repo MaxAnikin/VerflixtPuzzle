@@ -67,9 +67,9 @@ namespace VerflixtPuzzle.Cmd
         //}
 
         [Benchmark]
-        public void RotateAndSolve()
+        public void RotateAndSolveCross()
         {
-            puzzle.RotateAndSolve([0, 1, 2, 3, 4, 5, 6, 7, 8], [], 0, (puzzle1, order) => { });
+            puzzle.RotateAndSolveCross([0, 1, 2, 3, 4, 5, 6, 7, 8], [], 0, (puzzle1, order) => { });
         }
     }
 }

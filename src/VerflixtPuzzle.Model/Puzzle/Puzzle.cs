@@ -3,6 +3,7 @@
     public class Puzzle
     {
         private readonly SquareTile[] _initialSquareTiles;
+        private readonly Dictionary<string, bool> _solvedCrossIds;
 
         public Puzzle(SquareTile[] tiles)
         {
@@ -13,6 +14,8 @@
                 throw new ArgumentOutOfRangeException(nameof(tiles), "Number of tiles be 9.");
 
             _initialSquareTiles = new SquareTile[tiles.Length];
+            _solvedCrossIds = new Dictionary<string, bool>();
+
             tiles.CopyTo(_initialSquareTiles, 0);
         }
 
@@ -73,11 +76,46 @@
 
         public void RotateAndSolveCross(int[] order, int[] startCheck, int i, Action<Puzzle, int[]> onSolvedAction)
         {
-            if(!RotateAndSolveCrossOnly(order, [order[1], order[3], order[4], order[5], order[7]], 0))
+            string crossId = GetOrderId(order);
+
+            bool existingCross = _solvedCrossIds.TryGetValue(crossId, out bool isSolved);
+            if (existingCross)
                 return;
 
+            if (!RotateAndSolveCrossOnly(order, [order[1], order[3], order[4], order[5], order[7]], 0))
+            {
+                AddOrderSolutionResult(order, false);
+                return;
+            }
+
             if (RotateAndSolveRest(order, [order[0], order[2], order[6], order[8]], 0))
+            {
+                AddOrderSolutionResult(order, true);
                 onSolvedAction(this, order);
+            }
+            else AddOrderSolutionResult(order, false);
+        }
+
+        private void AddOrderSolutionResult(int[] order, bool isSolved)
+        {
+            //_solvedCrossIds.Add(GetCrossId(order), isSolved);
+            //_solvedCrossIds.Add(string.Join(",", new[] { order[3], order[7], order[4], order[1], order[5] }), isSolved);
+            //_solvedCrossIds.Add(string.Join(",", new[] { order[7], order[5], order[4], order[3], order[1] }), isSolved);
+            //_solvedCrossIds.Add(string.Join(",", new[] { order[5], order[1], order[4], order[7], order[3] }), isSolved);
+            _solvedCrossIds.Add(string.Join(",", new[] { order[0], order[1], order[2], order[3], order[4], order[5], order[6], order[7], order[8] }), isSolved);
+            _solvedCrossIds.Add(string.Join(",", new[] { order[6], order[3], order[0], order[7], order[4], order[1], order[8], order[5], order[2] }), isSolved);
+            _solvedCrossIds.Add(string.Join(",", new[] { order[8], order[7], order[6], order[5], order[4], order[3], order[2], order[1], order[0] }), isSolved);
+            _solvedCrossIds.Add(string.Join(",", new[] { order[2], order[5], order[8], order[1], order[4], order[7], order[0], order[3], order[6] }), isSolved);
+        }
+
+        private string GetCrossId(int[] order)
+        {
+            return string.Join(",", new[] { order[1], order[3], order[4], order[5], order[7] });
+        }
+
+        private string GetOrderId(int[] order)
+        {
+            return string.Join(",", new[] { order[0], order[1], order[2], order[3], order[4], order[5], order[6], order[7], order[8] });
         }
 
         private bool RotateAndSolveRest(int[] order, int[] restOrder, int i)

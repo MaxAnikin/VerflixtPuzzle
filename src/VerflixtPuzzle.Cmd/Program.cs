@@ -23,7 +23,7 @@ var completeWatch = Stopwatch.StartNew();
 int positionsCount = 0;
 
 puzzle.Permutate((puzzle1, order) =>
-{ 
+{
     vis.Visualize(puzzle1, order);
     Console.WriteLine(string.Join(",", order));
     Console.WriteLine($"Time: {oneFindWatch.Elapsed}");
