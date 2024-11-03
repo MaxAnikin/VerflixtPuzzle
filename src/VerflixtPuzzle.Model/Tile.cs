@@ -31,12 +31,12 @@ public class NSideTile(ISide[] sides)
 {
     protected readonly ISide[] Sides = sides;
 
-    public ISide GetSide(int index, int position)
+    public ISide GetSide(int sideIndex, int rotation)
     {
-        if (position < 0 || position > Sides.Length)
-            throw new ArgumentOutOfRangeException(nameof(position));
+        if (rotation < 0 || rotation > Sides.Length)
+            throw new ArgumentOutOfRangeException(nameof(rotation));
 
-        var i = index + position;
+        var i = sideIndex + rotation;
         if (i > Sides.Length - 1)
             i -= Sides.Length;
 
