@@ -1,4 +1,4 @@
 ﻿namespace VerflixtPuzzle.Model.Puzzle
 {
-    public record Solution(int[] Order, int[] Positions);
+    public record Solution(int[] Order, int[] Rotation);
 }

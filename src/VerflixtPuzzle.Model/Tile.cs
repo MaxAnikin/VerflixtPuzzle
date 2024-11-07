@@ -1,5 +1,22 @@
 ﻿namespace VerflixtPuzzle.Model;
 
+public enum SquareTileSide : int
+{
+    Left = 0,
+    Up = 1,
+    Right = 2,
+    Down = 3,
+}
+
+public class SquareTile2 : NSideTile
+{
+    public SquareTile2(ISide[] sides) : base(sides)
+    {
+        if (sides.Length != 4)
+            throw new ArgumentOutOfRangeException(nameof(sides), "Square tile can have exactly 4 sides only.");
+    }
+}
+
 public class SquareTile(ISide[] sides) : NSideTile(sides)
 {
     public ISide Up => GetSide(1, Position);

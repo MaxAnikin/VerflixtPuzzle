@@ -98,10 +98,6 @@
 
         private void AddOrderSolutionResult(int[] order, bool isSolved)
         {
-            //_solvedCrossIds.Add(GetCrossId(order), isSolved);
-            //_solvedCrossIds.Add(string.Join(",", new[] { order[3], order[7], order[4], order[1], order[5] }), isSolved);
-            //_solvedCrossIds.Add(string.Join(",", new[] { order[7], order[5], order[4], order[3], order[1] }), isSolved);
-            //_solvedCrossIds.Add(string.Join(",", new[] { order[5], order[1], order[4], order[7], order[3] }), isSolved);
             _solvedCrossIds.Add(string.Join(",", new[] { order[0], order[1], order[2], order[3], order[4], order[5], order[6], order[7], order[8] }), isSolved);
             _solvedCrossIds.Add(string.Join(",", new[] { order[6], order[3], order[0], order[7], order[4], order[1], order[8], order[5], order[2] }), isSolved);
             _solvedCrossIds.Add(string.Join(",", new[] { order[8], order[7], order[6], order[5], order[4], order[3], order[2], order[1], order[0] }), isSolved);
