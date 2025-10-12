@@ -1,5 +1,5 @@
 use colored::Colorize;
-use std::{any::Any, fmt::Error, io};
+use std::{any::Any, collections::HashMap, fmt::Error, io, time::Instant};
 
 const BLUE: u8 = 1;
 const RED: u8 = 2;
@@ -121,38 +121,26 @@ impl SquarePuzzle {
         Ok(result)
     }
 
-    fn solve_with_permutations(&self) -> Result<Vec<String>, String> {
-        let result: Vec<String> = vec![];
+    fn solve_with_permutations(&mut self) -> Result<Vec<Tile>, String> {
+        let result: Vec<Tile> = vec![];
+        let mut cross_results: HashMap<String, bool> = HashMap::new();
 
-        let mut elements: Vec<String> = vec![
-            "00".to_string(),
-            "01".to_string(),
-            "02".to_string(),
-            "10".to_string(),
-            "11".to_string(),
-            "12".to_string(),
-            "20".to_string(),
-            "21".to_string(),
-            "22".to_string(),
-        ];
-
-        &self.generate_permutations(&mut elements, 0);
+        &self.generate_permutations(0);
 
         Ok(result)
     }
 
-    fn generate_permutations(&self, arr: &mut Vec<String>, start: usize) {
-        if start == arr.len() {
-            println!("{:?}", arr);
+    fn generate_permutations(&mut self, start: usize) {
+        if start == self.tiles.len() {
             return;
         }
 
-        for i in start..arr.len() {
-            arr.swap(start, i);
+        for i in start..self.tiles.len() {
+            self.tiles.swap(start, i);
 
-            &self.generate_permutations(arr, start + 1);
+            let _ = &self.generate_permutations(start + 1);
 
-            arr.swap(start, i);
+            self.tiles.swap(start, i);
         }
     }
 }
@@ -172,12 +160,17 @@ fn main() {
 
     println!("{}", "Creating a puzzle...");
 
-    let puzzle: SquarePuzzle = create_puzzle();
+    let mut puzzle: SquarePuzzle = create_puzzle();
     puzzle.show_in_console();
     puzzle.print_is_solved("Base puzzle solve result".to_string());
 
     let all_red_puzzle: SquarePuzzle = create_puzzle_all_red();
     all_red_puzzle.print_is_solved("All red puzzle solve result".to_string());
+
+    let start = Instant::now();
+    let _s1 = puzzle.solve_with_permutations();
+    let duration = start.elapsed();
+    println!("Permutations generated in: {:?}", duration);
 
     println!("{}", "Game is over. Press ENTER to close.".blue());
     let mut input = String::new();
