@@ -1,5 +1,5 @@
 use colored::Colorize;
-use std::{any::Any, collections::HashMap, fmt::Error, io, time::Instant};
+use std::{any::Any, collections::{btree_map::VacantEntry, HashMap}, fmt::Error, io, time::Instant};
 
 const BLUE: u8 = 1;
 const RED: u8 = 2;
@@ -58,18 +58,26 @@ impl Tile {
 }
 
 #[derive(Debug)]
+struct TilePosition {
+    id: String,
+    direction: u8
+}
+
+
+#[derive(Debug)]
+struct PuzzleSolution {
+    tile_positions: Vec<TilePosition>
+}
+
+
+#[derive(Debug)]
 struct SquarePuzzle {
-    tiles: Vec<Tile>,
+    tiles: Vec<Tile>
 }
 
 impl SquarePuzzle {
     fn print_is_solved(&self, message: String) {
-        let is_solved_result = self.is_solved();
-
-        let is_solved = match is_solved_result {
-            Ok(is_solved) => is_solved,
-            Err(error) => panic!("Problem solving a puzzle: {error:?}"),
-        };
+        let is_solved: bool = self.is_solved();
 
         println!(
             "{}:{}",
@@ -82,9 +90,9 @@ impl SquarePuzzle {
         );
     }
 
-    fn is_solved(&self) -> Result<bool, String> {
+    fn is_solved(&self) -> bool {
         if self.tiles.len() != 9 {
-            return Err("Square puzzle with 9 tiles is supported only!".to_string());
+            panic!("Square puzzle with 9 tiles is supported only!");
         }
 
         let center_tile: &Tile = &self.tiles[4];
@@ -93,10 +101,27 @@ impl SquarePuzzle {
         let right_tile: &Tile = &self.tiles[5];
         let down_tile: &Tile = &self.tiles[7];
 
-        Ok(center_tile.left_side().compare(left_tile.right_side())
+        center_tile.left_side().compare(left_tile.right_side())
             && center_tile.up_side().compare(up_tile.down_side())
             && center_tile.right_side().compare(right_tile.left_side())
-            && center_tile.down_side().compare(down_tile.up_side()))
+            && center_tile.down_side().compare(down_tile.up_side())
+    }
+
+    fn is_cross_solvable(&self) -> bool {
+        if self.tiles.len() != 9 {
+            panic!("Square puzzle with 9 tiles is supported only!");
+        }
+
+        let center_tile: &Tile = &self.tiles[4];
+        let left_tile: &Tile = &self.tiles[3];
+        let up_tile: &Tile = &self.tiles[1];
+        let right_tile: &Tile = &self.tiles[5];
+        let down_tile: &Tile = &self.tiles[7];
+
+        center_tile.left_side().compare(left_tile.right_side())
+            && center_tile.up_side().compare(up_tile.down_side())
+            && center_tile.right_side().compare(right_tile.left_side())
+            && center_tile.down_side().compare(down_tile.up_side())
     }
 
     fn find_and_rotate(&self, reference_side: &TileSide) -> Option<&Tile> {
@@ -125,23 +150,46 @@ impl SquarePuzzle {
         let result: Vec<Tile> = vec![];
         let mut cross_results: HashMap<String, bool> = HashMap::new();
 
-        &self.generate_permutations(0);
+        let _generate_permutations = &self.permutate(cross_results, 0);
 
         Ok(result)
     }
 
-    fn generate_permutations(&mut self, start: usize) {
+    fn permutate(&mut self, mut map: HashMap<String, bool>, start: usize) {
         if start == self.tiles.len() {
+            let cross_key: String = self.get_cross_key();
+            let val = match map.entry(cross_key) {
+                Vacant (entry) => 
+                {
+                    let is_cross_solvable: bool = self.is_cross_solvable();
+                    map.insert(cross_key, is_cross_solved)
+                }
+                Occupied (entry) => 
+                {
+                    entry
+                }
+
+
+            };
+            
             return;
         }
 
         for i in start..self.tiles.len() {
             self.tiles.swap(start, i);
-
-            let _ = &self.generate_permutations(start + 1);
+            
+            let _ = &self.permutate(map, start + 1);
 
             self.tiles.swap(start, i);
         }
+    }
+    
+    fn get_cross_key(&self) ->String {
+        if self.tiles.len() != 9 {
+            panic!("Cross string key requires 9 tiles.");
+        }
+
+        format!("{}{}{}{}{}", self.tiles[1].id, self.tiles[3].id, self.tiles[4].id, self.tiles[5].id, self.tiles[7].id)
     }
 }
 
@@ -157,7 +205,6 @@ impl ConsoleDisplayablePuzzle for SquarePuzzle {
 
 fn main() {
     println!("{}", "Starting a puzzle game... Enjoy!".blue());
-
     println!("{}", "Creating a puzzle...");
 
     let mut puzzle: SquarePuzzle = create_puzzle();
@@ -167,9 +214,9 @@ fn main() {
     let all_red_puzzle: SquarePuzzle = create_puzzle_all_red();
     all_red_puzzle.print_is_solved("All red puzzle solve result".to_string());
 
-    let start = Instant::now();
-    let _s1 = puzzle.solve_with_permutations();
-    let duration = start.elapsed();
+    let start: Instant = Instant::now();
+    let _s1: Result<Vec<Tile>, String> = puzzle.solve_with_permutations();
+    let duration: std::time::Duration = start.elapsed();
     println!("Permutations generated in: {:?}", duration);
 
     println!("{}", "Game is over. Press ENTER to close.".blue());
