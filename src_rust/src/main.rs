@@ -63,12 +63,10 @@ struct TilePosition {
     direction: u8
 }
 
-
 #[derive(Debug)]
 struct PuzzleSolution {
     tile_positions: Vec<TilePosition>
 }
-
 
 #[derive(Debug)]
 struct SquarePuzzle {
@@ -184,7 +182,7 @@ impl SquarePuzzle {
         }
     }
     
-    fn get_cross_key(&self) ->String {
+    fn get_cross_key(&self) -> String {
         if self.tiles.len() != 9 {
             panic!("Cross string key requires 9 tiles.");
         }
