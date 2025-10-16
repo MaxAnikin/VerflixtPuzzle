@@ -1,5 +1,5 @@
 use colored::Colorize;
-use std::{any::Any, collections::{btree_map::VacantEntry, HashMap}, fmt::Error, io, time::Instant};
+use std::{any::Any, collections::{btree_map::VacantEntry, HashMap}, fmt::Error, io, panic, time::Instant};
 
 const BLUE: u8 = 1;
 const RED: u8 = 2;
@@ -88,99 +88,99 @@ impl SquarePuzzle {
         );
     }
 
-    fn is_solved(&self) -> bool {
-        if self.tiles.len() != 9 {
-            panic!("Square puzzle with 9 tiles is supported only!");
-        }
+    // fn is_solved(&self) -> bool {
+    //     if self.tiles.len() != 9 {
+    //         panic!("Square puzzle with 9 tiles is supported only!");
+    //     }
 
-        let center_tile: &Tile = &self.tiles[4];
-        let left_tile: &Tile = &self.tiles[3];
-        let up_tile: &Tile = &self.tiles[1];
-        let right_tile: &Tile = &self.tiles[5];
-        let down_tile: &Tile = &self.tiles[7];
+    //     let center_tile: &Tile = &self.tiles[4];
+    //     let left_tile: &Tile = &self.tiles[3];
+    //     let up_tile: &Tile = &self.tiles[1];
+    //     let right_tile: &Tile = &self.tiles[5];
+    //     let down_tile: &Tile = &self.tiles[7];
 
-        center_tile.left_side().compare(left_tile.right_side())
-            && center_tile.up_side().compare(up_tile.down_side())
-            && center_tile.right_side().compare(right_tile.left_side())
-            && center_tile.down_side().compare(down_tile.up_side())
-    }
+    //     center_tile.left_side().compare(left_tile.right_side())
+    //         && center_tile.up_side().compare(up_tile.down_side())
+    //         && center_tile.right_side().compare(right_tile.left_side())
+    //         && center_tile.down_side().compare(down_tile.up_side())
+    // }
 
-    fn is_cross_solvable(&self) -> bool {
-        if self.tiles.len() != 9 {
-            panic!("Square puzzle with 9 tiles is supported only!");
-        }
+    // fn is_cross_solvable(&self) -> bool {
+    //     if self.tiles.len() != 9 {
+    //         panic!("Square puzzle with 9 tiles is supported only!");
+    //     }
 
-        let center_tile: &Tile = &self.tiles[4];
-        let left_tile: &Tile = &self.tiles[3];
-        let up_tile: &Tile = &self.tiles[1];
-        let right_tile: &Tile = &self.tiles[5];
-        let down_tile: &Tile = &self.tiles[7];
+    //     let center_tile: &Tile = &self.tiles[4];
+    //     let left_tile: &Tile = &self.tiles[3];
+    //     let up_tile: &Tile = &self.tiles[1];
+    //     let right_tile: &Tile = &self.tiles[5];
+    //     let down_tile: &Tile = &self.tiles[7];
 
-        center_tile.left_side().compare(left_tile.right_side())
-            && center_tile.up_side().compare(up_tile.down_side())
-            && center_tile.right_side().compare(right_tile.left_side())
-            && center_tile.down_side().compare(down_tile.up_side())
-    }
+    //     center_tile.left_side().compare(left_tile.right_side())
+    //         && center_tile.up_side().compare(up_tile.down_side())
+    //         && center_tile.right_side().compare(right_tile.left_side())
+    //         && center_tile.down_side().compare(down_tile.up_side())
+    // }
 
-    fn find_and_rotate(&self, reference_side: &TileSide) -> Option<&Tile> {
-        for tile in &self.tiles {
-            for side in &tile.sides {
-                if reference_side.compare(&side) {
-                    return Some(tile);
-                }
-            }
-        }
+    // fn find_and_rotate(&self, reference_side: &TileSide) -> Option<&Tile> {
+    //     for tile in &self.tiles {
+    //         for side in &tile.sides {
+    //             if reference_side.compare(&side) {
+    //                 return Some(tile);
+    //             }
+    //         }
+    //     }
 
-        None
-    }
+    //     None
+    // }
 
-    fn solve_with_selection(&self) -> Result<Vec<u8>, String> {
-        let result: Vec<u8> = vec![0, 0, 0, 0, 0, 0, 0, 0, 0];
+    // fn solve_with_selection(&self) -> Result<Vec<u8>, String> {
+    //     let result: Vec<u8> = vec![0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-        let mut elements: Vec<u8> = (0..8).collect();
+    //     let mut elements: Vec<u8> = (0..8).collect();
 
-        for tile in &self.tiles {}
+    //     for tile in &self.tiles {}
 
-        Ok(result)
-    }
+    //     Ok(result)
+    // }
 
-    fn solve_with_permutations(&mut self) -> Result<Vec<Tile>, String> {
-        let result: Vec<Tile> = vec![];
-        let mut cross_results: HashMap<String, bool> = HashMap::new();
+    // fn solve_with_permutations(&mut self) -> Result<Vec<Tile>, String> {
+    //     let result: Vec<Tile> = vec![];
+    //     let mut cross_results: HashMap<String, bool> = HashMap::new();
 
-        let _generate_permutations = &self.permutate(cross_results, 0);
+    //     let _generate_permutations = &self.permutate(cross_results, 0);
 
-        Ok(result)
-    }
+    //     Ok(result)
+    // }
 
-    fn permutate(&mut self, mut map: HashMap<String, bool>, start: usize) {
-        if start == self.tiles.len() {
-            let cross_key: String = self.get_cross_key();
-            let val = match map.entry(cross_key) {
-                Vacant (entry) => 
-                {
-                    let is_cross_solvable: bool = self.is_cross_solvable();
-                    map.insert(cross_key, is_cross_solved)
-                }
-                Occupied (entry) => 
-                {
-                    entry
-                }
+    // fn permutate(&mut self, mut map: HashMap<String, bool>, start: usize) {
+    //     if start == self.tiles.len() {
+    //         let cross_key: String = self.get_cross_key();
+    //         let val = match map.entry(cross_key) {
+    //             Vacant (entry) => 
+    //             {
+    //                 let is_cross_solvable: bool = self.is_cross_solvable();
+    //                 map.insert(cross_key, is_cross_solved)
+    //             }
+    //             Occupied (entry) => 
+    //             {
+    //                 entry
+    //             }
 
 
-            };
+    //         };
             
-            return;
-        }
+    //         return;
+    //     }
 
-        for i in start..self.tiles.len() {
-            self.tiles.swap(start, i);
+    //     for i in start..self.tiles.len() {
+    //         self.tiles.swap(start, i);
             
-            let _ = &self.permutate(map, start + 1);
+    //         let _ = &self.permutate(map, start + 1);
 
-            self.tiles.swap(start, i);
-        }
-    }
+    //         self.tiles.swap(start, i);
+    //     }
+    // }
     
     fn get_cross_key(&self) -> String {
         if self.tiles.len() != 9 {
@@ -188,6 +188,69 @@ impl SquarePuzzle {
         }
 
         format!("{}{}{}{}{}", self.tiles[1].id, self.tiles[3].id, self.tiles[4].id, self.tiles[5].id, self.tiles[7].id)
+    }
+}
+
+
+#[derive(Debug)]
+struct SquarePuzzlePermutateByCrossResolver {
+    puzzle: SquarePuzzle
+}
+
+impl SquarePuzzlePermutateByCrossResolver {
+    fn new(puzzle: SquarePuzzle) -> Result<Self, String> {
+        if puzzle.tiles.len() != 9 {
+            return Err("Only square puzzles with nine tiles are supported.".to_string());
+        }
+
+        Ok(SquarePuzzlePermutateByCrossResolver { puzzle: puzzle })
+    }
+
+    fn get_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
+        let mut solutions: Vec<PuzzleSolution> = vec![];
+        let mut cross_map: HashMap<String, bool> = HashMap::new();
+        
+        match self.permutate(&mut solutions, &mut cross_map, 0) {
+            Err(error) => Err(error),
+            Ok(()) => Ok(solutions)
+        }        
+    }
+
+    fn permutate(&mut self, solutions: &mut Vec<PuzzleSolution>, map: &mut HashMap<String, bool>, start: usize) -> Result<(), String> {
+        if start == self.puzzle.tiles.len() {
+            let cross_key: String = match self.get_cross_key() {
+                Err(error) => {
+                    return Err(error);
+                }
+                Ok(key) => key
+            };
+
+            let cross_solved:bool = match map.get(&cross_key) {
+                Some(entry) => *entry,
+                None => {
+                    map.insert(cross_key, true);
+                    true
+                }
+            };
+        }
+
+        for i in start..self.puzzle.tiles.len() {
+            self.puzzle.tiles.swap(start, i);
+            
+            let _ = self.permutate(solutions, map, start + 1);
+
+            self.puzzle.tiles.swap(start, i);
+        }
+
+        Ok(())
+    }
+
+    fn get_cross_key(&self) -> Result<String, String> {
+        if self.puzzle.tiles.len() != 9 {
+            return Err("Cross string key requires 9 tiles.".to_string());
+        }
+
+        Ok(format!("{}{}{}{}{}", self.puzzle.tiles[1].id, self.puzzle.tiles[3].id, self.puzzle.tiles[4].id, self.puzzle.tiles[5].id, self.puzzle.tiles[7].id))
     }
 }
 
