@@ -101,15 +101,18 @@ impl SquarePuzzlePermutateByCrossResolver {
         }
         Ok(SquarePuzzlePermutateByCrossResolver { puzzle: puzzle })
     }
+
     pub fn get_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
         let mut solutions: Vec<PuzzleSolution> = vec![];
         let mut cross_map: HashMap<String, bool> = HashMap::new();
-        match self.permutate(&mut solutions, &mut cross_map, 0) {
+
+        match self.permutate_and_check_is_solved(&mut solutions, &mut cross_map, 0) {
             Err(error) => Err(error),
             Ok(()) => Ok(solutions)
         }
     }
-    pub fn permutate(&mut self, solutions: &mut Vec<PuzzleSolution>, map: &mut HashMap<String, bool>, start: usize) -> Result<(), String> {
+
+    fn permutate_and_check_is_solved(&mut self, solutions: &mut Vec<PuzzleSolution>, map: &mut HashMap<String, bool>, start: usize) -> Result<(), String> {
         if start == self.puzzle.tiles.len() {
             let cross_key: String = match self.get_cross_key() {
                 Err(error) => {
@@ -117,6 +120,7 @@ impl SquarePuzzlePermutateByCrossResolver {
                 }
                 Ok(key) => key
             };
+
             let cross_solved:bool = match map.get(&cross_key) {
                 Some(entry) => *entry,
                 None => {
@@ -125,14 +129,17 @@ impl SquarePuzzlePermutateByCrossResolver {
                 }
             };
         }
+
         for i in start..self.puzzle.tiles.len() {
             self.puzzle.tiles.swap(start, i);
-            let _ = self.permutate(solutions, map, start + 1);
+            let _ = self.permutate_and_check_is_solved(solutions, map, start + 1);
             self.puzzle.tiles.swap(start, i);
         }
+
         Ok(())
     }
-    pub fn get_cross_key(&self) -> Result<String, String> {
+
+    fn get_cross_key(&self) -> Result<String, String> {
         if self.puzzle.tiles.len() != 9 {
             return Err("Cross string key requires 9 tiles.".to_string());
         }

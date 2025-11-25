@@ -10,12 +10,14 @@ fn main() {
     println!("{}", "Starting a puzzle game... Enjoy!".blue());
     println!("{}", "Creating a puzzle...");
 
-    let mut puzzle: SquarePuzzle = create_puzzle();
+    let puzzle: SquarePuzzle = create_puzzle();
     puzzle.show_in_console();
     puzzle.print_is_solved("Base puzzle solve result".to_string());
 
     let all_red_puzzle: SquarePuzzle = create_puzzle_all_red();
-    all_red_puzzle.print_is_solved("All red puzzle solve result".to_string());
+    let mut resolver: SquarePuzzlePermutateByCrossResolver = SquarePuzzlePermutateByCrossResolver::new(all_red_puzzle).unwrap_or_else(|err| panic!("Error creating resolver: {}", err));
+    let solutions: Vec<PuzzleSolution> = resolver.get_solutions().unwrap_or_else(|err| panic!("Solver error: {}", err));
+    println!("Found {} solutions for all-red puzzle.", solutions.len());
 
     let start: Instant = Instant::now();
     let _s1: Result<PuzzleSolution, String> = puzzle.solve_with_permutations();
