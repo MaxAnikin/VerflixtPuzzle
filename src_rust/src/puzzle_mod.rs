@@ -58,30 +58,45 @@ impl Tile {
 #[derive(Debug)]
 pub struct TilePosition {
     pub id: String,
-    pub direction: u8
+    pub direction: u8,
 }
 
 #[derive(Debug)]
 pub struct PuzzleSolution {
-    pub tile_positions: Vec<TilePosition>
+    pub tile_positions: Vec<TilePosition>,
 }
 
 #[derive(Debug)]
 pub struct SquarePuzzle {
     pub tiles: Vec<Tile>,
-    pub is_solved: bool
+    pub is_solved: bool,
 }
 
 impl SquarePuzzle {
     pub fn print_is_solved(&self, message: String) {
         let is_solved: bool = self.is_solved;
-        println!("{}:{}", message, if is_solved { "True".green() } else { "False".red() });
+        println!(
+            "{}:{}",
+            message,
+            if is_solved {
+                "True".green()
+            } else {
+                "False".red()
+            }
+        );
     }
     pub fn get_cross_key(&self) -> String {
         if self.tiles.len() != 9 {
             panic!("Cross string key requires 9 tiles.");
         }
-        format!("{}{}{}{}{}", self.tiles[1].id, self.tiles[3].id, self.tiles[4].id, self.tiles[5].id, self.tiles[7].id)
+        format!(
+            "{}{}{}{}{}",
+            self.tiles[1].id,
+            self.tiles[3].id,
+            self.tiles[4].id,
+            self.tiles[5].id,
+            self.tiles[7].id
+        )
     }
     pub fn solve_with_permutations(&self) -> Result<PuzzleSolution, String> {
         // Implementation placeholder
@@ -91,7 +106,7 @@ impl SquarePuzzle {
 
 #[derive(Debug)]
 pub struct SquarePuzzlePermutateByCrossResolver {
-    pub puzzle: SquarePuzzle
+    pub puzzle: SquarePuzzle,
 }
 
 impl SquarePuzzlePermutateByCrossResolver {
@@ -106,24 +121,30 @@ impl SquarePuzzlePermutateByCrossResolver {
         let mut solutions: Vec<PuzzleSolution> = vec![];
         let mut cross_map: HashMap<String, bool> = HashMap::new();
 
-        match self.permutate_and_check_is_solved(&mut solutions, &mut cross_map, 0) {
+        match self.permutate(&mut solutions, &mut cross_map, 0) {
             Err(error) => Err(error),
-            Ok(()) => Ok(solutions)
+            Ok(()) => Ok(solutions),
         }
     }
 
-    fn permutate_and_check_is_solved(&mut self, solutions: &mut Vec<PuzzleSolution>, map: &mut HashMap<String, bool>, start: usize) -> Result<(), String> {
+    fn permutate(
+        &mut self,
+        solutions: &mut Vec<PuzzleSolution>,
+        map: &mut HashMap<String, bool>,
+        start: usize,
+    ) -> Result<(), String> {
         if start == self.puzzle.tiles.len() {
             let cross_key: String = match self.get_cross_key() {
                 Err(error) => {
                     return Err(error);
                 }
-                Ok(key) => key
+                Ok(key) => key,
             };
 
-            let cross_solved:bool = match map.get(&cross_key) {
+            let cross_solved: bool = match map.get(&cross_key) {
                 Some(entry) => *entry,
                 None => {
+                    let cross_solutions: Vec<String> = vec![];
                     map.insert(cross_key, true);
                     true
                 }
@@ -132,7 +153,7 @@ impl SquarePuzzlePermutateByCrossResolver {
 
         for i in start..self.puzzle.tiles.len() {
             self.puzzle.tiles.swap(start, i);
-            let _ = self.permutate_and_check_is_solved(solutions, map, start + 1);
+            let _ = self.permutate(solutions, map, start + 1);
             self.puzzle.tiles.swap(start, i);
         }
 
@@ -143,7 +164,14 @@ impl SquarePuzzlePermutateByCrossResolver {
         if self.puzzle.tiles.len() != 9 {
             return Err("Cross string key requires 9 tiles.".to_string());
         }
-        Ok(format!("{}{}{}{}{}", self.puzzle.tiles[1].id, self.puzzle.tiles[3].id, self.puzzle.tiles[4].id, self.puzzle.tiles[5].id, self.puzzle.tiles[7].id))
+        Ok(format!(
+            "{}{}{}{}{}",
+            self.puzzle.tiles[1].id,
+            self.puzzle.tiles[3].id,
+            self.puzzle.tiles[4].id,
+            self.puzzle.tiles[5].id,
+            self.puzzle.tiles[7].id
+        ))
     }
 }
 
