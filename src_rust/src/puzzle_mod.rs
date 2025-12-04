@@ -2,6 +2,7 @@
 // Contains all puzzle logic except main, create_puzzle, and create_puzzle_all_red
 
 use colored::Colorize;
+use serde::{Deserialize, Serialize, Serializer, Deserializer};
 use std::collections::HashMap;
 
 pub const BLUE: u8 = 1;
@@ -12,10 +13,78 @@ pub const BODY_PATTERN: u8 = 3;
 pub const TAIL: u8 = 1;
 pub const HEAD: u8 = 2;
 
-#[derive(Debug)]
+fn color_to_str(value: u8) -> &'static str {
+    match value {
+        BLUE => "BLUE",
+        RED => "RED",
+        GREEN => "GREEN",
+        YELLOW => "YELLOW",
+        _ => "UNKNOWN",
+    }
+}
+
+fn str_to_color(s: &str) -> u8 {
+    match s {
+        "BLUE" => BLUE,
+        "RED" => RED,
+        "GREEN" => GREEN,
+        "YELLOW" => YELLOW,
+        _ => 0,
+    }
+}
+
+fn body_to_str(value: u8) -> &'static str {
+    match value {
+        TAIL => "TAIL",
+        HEAD => "HEAD",
+        _ => "UNKNOWN",
+    }
+}
+
+fn str_to_body(s: &str) -> u8 {
+    match s {
+        "TAIL" => TAIL,
+        "HEAD" => HEAD,
+        _ => 0,
+    }
+}
+
+fn serialize_color<S>(value: &u8, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_str(color_to_str(*value))
+}
+
+fn deserialize_color<'de, D>(deserializer: D) -> Result<u8, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s = String::deserialize(deserializer)?;
+    Ok(str_to_color(&s))
+}
+
+fn serialize_body<S>(value: &u8, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_str(body_to_str(*value))
+}
+
+fn deserialize_body<'de, D>(deserializer: D) -> Result<u8, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = String::deserialize(deserializer)?;
+    Ok(str_to_body(&s))
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct TileSide {
+    #[serde(serialize_with = "serialize_color", deserialize_with = "deserialize_color")]
     pub equal_part: u8,
     pub bit_pattern: u8,
+    #[serde(serialize_with = "serialize_body", deserialize_with = "deserialize_body")]
     pub bit_value: u8,
 }
 
@@ -27,7 +96,7 @@ impl TileSide {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tile {
     pub id: String,
     pub direction: u8,
@@ -55,18 +124,18 @@ impl Tile {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TilePosition {
     pub id: String,
     pub direction: u8,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PuzzleSolution {
     pub tile_positions: Vec<TilePosition>,
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct SquarePuzzle {
     pub tiles: Vec<Tile>,
     pub is_solved: bool,
@@ -107,6 +176,8 @@ impl SquarePuzzle {
 #[derive(Debug)]
 pub struct SquarePuzzlePermutateByCrossResolver {
     pub puzzle: SquarePuzzle,
+    solutions: Vec<PuzzleSolution>,
+    cross_map: HashMap<String, bool>,
 }
 
 impl SquarePuzzlePermutateByCrossResolver {
@@ -114,25 +185,17 @@ impl SquarePuzzlePermutateByCrossResolver {
         if puzzle.tiles.len() != 9 {
             return Err("Only square puzzles with nine tiles are supported.".to_string());
         }
-        Ok(SquarePuzzlePermutateByCrossResolver { puzzle: puzzle })
+        Ok(SquarePuzzlePermutateByCrossResolver { puzzle: puzzle, solutions: vec![], cross_map: HashMap::new() })
     }
 
     pub fn get_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
-        let mut solutions: Vec<PuzzleSolution> = vec![];
-        let mut cross_map: HashMap<String, bool> = HashMap::new();
-
-        match self.permutate(&mut solutions, &mut cross_map, 0) {
+        match self.permutate(0) {
             Err(error) => Err(error),
-            Ok(()) => Ok(solutions),
+            Ok(()) => Ok(self.solutions.clone()),
         }
     }
 
-    fn permutate(
-        &mut self,
-        solutions: &mut Vec<PuzzleSolution>,
-        map: &mut HashMap<String, bool>,
-        start: usize,
-    ) -> Result<(), String> {
+    fn permutate(&mut self,start: usize) -> Result<(), String> {
         if start == self.puzzle.tiles.len() {
             let cross_key: String = match self.get_cross_key() {
                 Err(error) => {
@@ -141,11 +204,11 @@ impl SquarePuzzlePermutateByCrossResolver {
                 Ok(key) => key,
             };
 
-            let cross_solved: bool = match map.get(&cross_key) {
+            let cross_solved: bool = match self.cross_map.get(&cross_key) {
                 Some(entry) => *entry,
                 None => {
                     let cross_solutions: Vec<String> = vec![];
-                    map.insert(cross_key, true);
+                    self.cross_map.insert(cross_key, true);
                     true
                 }
             };
@@ -153,7 +216,7 @@ impl SquarePuzzlePermutateByCrossResolver {
 
         for i in start..self.puzzle.tiles.len() {
             self.puzzle.tiles.swap(start, i);
-            let _ = self.permutate(solutions, map, start + 1);
+            let _ = self.permutate(start + 1);
             self.puzzle.tiles.swap(start, i);
         }
 

@@ -1,0 +1,239 @@
+{
+  "tiles": [
+    {
+      "id": "00",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "01",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "20",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "21",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    },
+    {
+      "id": "22",
+      "direction": 0,
+      "sides": [
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "RED",
+          "bit_pattern": 3,
+          "bit_value": "TAIL"
+        }
+      ]
+    }
+  ],
+  "is_solved": false
+}
