@@ -135,6 +135,32 @@ pub struct PuzzleSolution {
     pub tile_positions: Vec<TilePosition>,
 }
 
+impl PuzzleSolution {
+    pub fn print(&self) {
+        use std::fs::OpenOptions;
+        use std::io::Write;
+
+        let mut output = String::from("solution: ");
+
+        for (i, tile_position) in self.tile_positions.iter().enumerate() {
+            output.push_str(&tile_position.id);
+            if i != self.tile_positions.len() - 1 {
+                output.push(' ');
+            }
+        }
+        output.push('\n');
+
+        let mut file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open("permurtate.txt")
+            .expect("Unable to open permurtate.txt");
+        
+        file.write_all(output.as_bytes())
+            .expect("Unable to write to permurtate.txt");
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SquarePuzzle {
     pub tiles: Vec<Tile>,
@@ -154,6 +180,7 @@ impl SquarePuzzle {
             }
         );
     }
+
     pub fn get_cross_key(&self) -> String {
         if self.tiles.len() != 9 {
             panic!("Cross string key requires 9 tiles.");
@@ -167,6 +194,7 @@ impl SquarePuzzle {
             self.tiles[7].id
         )
     }
+
     pub fn solve_with_permutations(&self) -> Result<PuzzleSolution, String> {
         // Implementation placeholder
         Err("Not implemented".to_string())
@@ -178,6 +206,7 @@ pub struct SquarePuzzlePermutateByCrossResolver {
     pub puzzle: SquarePuzzle,
     solutions: Vec<PuzzleSolution>,
     cross_map: HashMap<String, bool>,
+    counter: u32,
 }
 
 impl SquarePuzzlePermutateByCrossResolver {
@@ -185,40 +214,73 @@ impl SquarePuzzlePermutateByCrossResolver {
         if puzzle.tiles.len() != 9 {
             return Err("Only square puzzles with nine tiles are supported.".to_string());
         }
-        Ok(SquarePuzzlePermutateByCrossResolver { puzzle: puzzle, solutions: vec![], cross_map: HashMap::new() })
+        
+        // Очистить файл при создании резолвера
+        use std::fs::File;
+        File::create("permurtate.txt").expect("Unable to create/clear permurtate.txt");
+        
+        Ok(SquarePuzzlePermutateByCrossResolver { puzzle: puzzle, solutions: vec![], cross_map: HashMap::new(), counter: 0 })
+    }
+
+    pub fn print_count(&self) {
+        use std::fs::OpenOptions;
+        use std::io::Write;
+
+        let output = format!("solution: Total permutations checked: {}\n", self.counter);
+        let mut file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open("permurtate.txt")
+            .expect("Unable to open permurtate.txt");
+        
+        file.write_all(output.as_bytes())
+            .expect("Unable to write to permurtate.txt");
     }
 
     pub fn get_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
-        match self.permutate(0) {
+        match self.permutate_tiles(0) {
             Err(error) => Err(error),
             Ok(()) => Ok(self.solutions.clone()),
         }
     }
 
-    fn permutate(&mut self,start: usize) -> Result<(), String> {
-        if start == self.puzzle.tiles.len() {
-            let cross_key: String = match self.get_cross_key() {
-                Err(error) => {
-                    return Err(error);
-                }
-                Ok(key) => key,
-            };
-
-            let cross_solved: bool = match self.cross_map.get(&cross_key) {
-                Some(entry) => *entry,
-                None => {
-                    let cross_solutions: Vec<String> = vec![];
-                    self.cross_map.insert(cross_key, true);
-                    true
-                }
-            };
+    fn permutate_tiles(&mut self, cur: usize) -> Result<(), String> {
+        if cur == self.puzzle.tiles.len() {
+            self.counter += 1;
+            return Ok(());
         }
 
-        for i in start..self.puzzle.tiles.len() {
-            self.puzzle.tiles.swap(start, i);
-            let _ = self.permutate(start + 1);
-            self.puzzle.tiles.swap(start, i);
+        for i in cur..self.puzzle.tiles.len() {
+            self.puzzle.tiles.swap(cur, i);
+            
+            let _ = self.permutate_tiles(cur + 1);
+
+            self.puzzle.tiles.swap(cur, i);
         }
+
+        // if start == self.puzzle.tiles.len() {
+        //     let cross_key: String = match self.get_cross_key() {
+        //         Err(error) => {
+        //             return Err(error);
+        //         }
+        //         Ok(key) => key,
+        //     };
+
+        //     let cross_solved: bool = match self.cross_map.get(&cross_key) {
+        //         Some(entry) => *entry,
+        //         None => {
+        //             let cross_solutions: Vec<String> = vec![];
+        //             self.cross_map.insert(cross_key, true);
+        //             true
+        //         }
+        //     };
+        // }
+
+        // for i in start..self.puzzle.tiles.len() {
+        //     self.puzzle.tiles.swap(start, i);
+        //     let _ = self.permutate(start + 1);
+        //     self.puzzle.tiles.swap(start, i);
+        // }
 
         Ok(())
     }
@@ -235,6 +297,17 @@ impl SquarePuzzlePermutateByCrossResolver {
             self.puzzle.tiles[5].id,
             self.puzzle.tiles[7].id
         ))
+    }
+    
+    fn get_current_solution(&self) -> PuzzleSolution {
+        let mut tile_positions: Vec<TilePosition> = vec![];
+        for tile in &self.puzzle.tiles {
+            tile_positions.push(TilePosition {
+                id: tile.id.clone(),
+                direction: tile.direction,
+            });
+        }
+        PuzzleSolution { tile_positions }
     }
 }
 

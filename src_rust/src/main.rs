@@ -29,6 +29,7 @@ fn main() {
     // Create resolver and find solutions for the all-red puzzle
     let mut resolver: SquarePuzzlePermutateByCrossResolver = SquarePuzzlePermutateByCrossResolver::new(all_red_puzzle).unwrap_or_else(|err| panic!("Error creating resolver: {}", err));
     let solutions: Vec<PuzzleSolution> = resolver.get_solutions().unwrap_or_else(|err| panic!("Solver error: {}", err));
+    resolver.print_count();
     println!("Found {} solutions for all-red puzzle.", solutions.len());
 
     let start: Instant = Instant::now();
