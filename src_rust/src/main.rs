@@ -26,6 +26,7 @@ fn main() {
     println!("{}", "Working on solutions...");
     let start: Instant = Instant::now();
     let solutions: Vec<PuzzleSolution> = resolver.get_solutions().unwrap_or_else(|err| panic!("Solver error: {}", err));
+    
     resolver.print_count();
     let duration: std::time::Duration = start.elapsed();
     println!("Found {} solutions for all-red puzzle in {:?}.", solutions.len(), duration);
