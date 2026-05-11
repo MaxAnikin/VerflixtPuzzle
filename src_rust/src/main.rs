@@ -12,28 +12,26 @@ use std::time::Instant;
 
 fn main() {
     println!("{}", "Starting a puzzle game... Enjoy!".blue());
-    println!("{}", "Creating a puzzle...");
+    println!("{}", "Reading the all red puzzle...");
 
-    let puzzle: SquarePuzzle = create_puzzle();
-    puzzle.show_in_console();
-    puzzle.print_is_solved("Base puzzle solve result".to_string());
-
-
-    //* Save puzzle to JSON */ 
-    // let all_red_puzzle: SquarePuzzle = create_puzzle_all_red();
-    // save_json_pretty(&all_red_puzzle, "all_red_puzzle.json").unwrap_or_else(|err| panic!("Error saving JSON: {}", err));
 
     // initialize solver with all-red puzzle from JSON
     let all_red_puzzle: SquarePuzzle = read_json("all_red_puzzle.json").unwrap_or_else(|err| panic!("Error reading all_red_puzzle JSON: {}", err));
+    all_red_puzzle.show_in_console();
 
     // Create resolver and find solutions for the all-red puzzle
+    println!("{}", "Creating \"Permutation by cross\" resolver...");
     let mut resolver: SquarePuzzlePermutateByCrossResolver = SquarePuzzlePermutateByCrossResolver::new(all_red_puzzle).unwrap_or_else(|err| panic!("Error creating resolver: {}", err));
+
+    println!("{}", "Working on solutions...");
+    let start: Instant = Instant::now();
     let solutions: Vec<PuzzleSolution> = resolver.get_solutions().unwrap_or_else(|err| panic!("Solver error: {}", err));
     resolver.print_count();
-    println!("Found {} solutions for all-red puzzle.", solutions.len());
+    let duration: std::time::Duration = start.elapsed();
+    println!("Found {} solutions for all-red puzzle in {:?}.", solutions.len(), duration);
 
     let start: Instant = Instant::now();
-    let _s1: Result<PuzzleSolution, String> = puzzle.solve_with_permutations();
+    let _s1: Result<PuzzleSolution, String> = resolver.puzzle.solve_with_permutations();
     let duration: std::time::Duration = start.elapsed();
     println!("Permutations generated in: {:?}", duration);
 

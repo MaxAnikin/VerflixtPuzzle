@@ -2,8 +2,10 @@
 // Contains all puzzle logic except main, create_puzzle, and create_puzzle_all_red
 
 use colored::Colorize;
+use crossterm::{cursor, execute, terminal, style::{Color as TermColor, SetForegroundColor, Print, ResetColor}};
 use serde::{Deserialize, Serialize, Serializer, Deserializer};
 use std::collections::HashMap;
+use std::io::stdout;
 
 pub const BLUE: u8 = 1;
 pub const RED: u8 = 2;
@@ -315,8 +317,76 @@ pub trait ConsoleDisplayablePuzzle {
     fn show_in_console(&self);
 }
 
+fn map_term_color(equal_part: u8) -> TermColor {
+    match equal_part {
+        BLUE   => TermColor::Blue,
+        RED    => TermColor::Red,
+        GREEN  => TermColor::Green,
+        YELLOW => TermColor::Yellow,
+        _      => TermColor::White,
+    }
+}
+
+fn side_block(side: &TileSide) -> &'static str {
+    if side.bit_value == TAIL { "TAIL" } else { "HEAD" }
+}
+
 impl ConsoleDisplayablePuzzle for SquarePuzzle {
     fn show_in_console(&self) {
-        println!("I am a Square Puzzle. I have {} tiles.", self.tiles.len());
+        let mut out = stdout();
+        execute!(out,
+            terminal::Clear(terminal::ClearType::All),
+            cursor::MoveTo(0, 0)
+        ).unwrap();
+
+        // Each tile cell: 13 cols wide, 4 rows tall (3 content + 1 gap row)
+        let tile_w: u16 = 13;
+        let tile_h: u16 = 4;
+
+        for (idx, tile) in self.tiles.iter().enumerate() {
+            let gc = (idx % 3) as u16;
+            let gr = (idx / 3) as u16;
+            let bx = gc * tile_w;
+            let by = gr * tile_h;
+
+            //  row by+0:   "  UP   "   — UP side centred
+            let up = tile.up_side();
+            execute!(out,
+                cursor::MoveTo(bx + 4, by),
+                SetForegroundColor(map_term_color(up.equal_part)),
+                Print(side_block(up)),
+                ResetColor
+            ).unwrap();
+
+            //  row by+1:  "LEFT  ID  RIGHT" — LEFT, tile-id, RIGHT
+            let lf = tile.left_side();
+            execute!(out,
+                cursor::MoveTo(bx, by + 1),
+                SetForegroundColor(map_term_color(lf.equal_part)),
+                Print(side_block(lf)),
+                ResetColor,
+                cursor::MoveTo(bx + 5, by + 1),
+                Print(format!("{:>2}", &tile.id)),
+                cursor::MoveTo(bx + 8, by + 1)
+            ).unwrap();
+            let rt = tile.right_side();
+            execute!(out,
+                SetForegroundColor(map_term_color(rt.equal_part)),
+                Print(side_block(rt)),
+                ResetColor
+            ).unwrap();
+
+            //  row by+2:   "  DOWN   "   — DOWN side centred
+            let dn = tile.down_side();
+            execute!(out,
+                cursor::MoveTo(bx + 4, by + 2),
+                SetForegroundColor(map_term_color(dn.equal_part)),
+                Print(side_block(dn)),
+                ResetColor
+            ).unwrap();
+        }
+
+        // Move cursor below the entire grid
+        execute!(out, cursor::MoveTo(0, 3 * tile_h + 1)).unwrap();
     }
 }
