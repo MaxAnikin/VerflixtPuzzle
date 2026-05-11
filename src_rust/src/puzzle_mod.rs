@@ -242,14 +242,21 @@ impl SquarePuzzlePermutateByCrossResolver {
     pub fn get_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
         match self.permutate_tiles(0) {
             Err(error) => Err(error),
-            Ok(()) => Ok(self.solutions.clone()),
+            Ok(solutions) => Ok(solutions),
         }
     }
 
-    fn permutate_tiles(&mut self, cur: usize) -> Result<(), String> {
+    fn permutate_tiles(&mut self, cur: usize) -> Result<Vec<PuzzleSolution>, String> {
+        let mut valid_solutions: Vec<PuzzleSolution> = vec![];
+
+        // If we have a complete permutation, check if it's a valid solution
         if cur == self.puzzle.tiles.len() {
-            self.counter += 1;
-            return Ok(());
+            let is_valid: Result<bool, String> = self.is_solved();
+            match is_valid {
+                Err(error) => return Err(error),
+                Ok(true) => valid_solutions.push(self.get_current_solution()),
+                Ok(false) => {}
+            }
         }
 
         for i in cur..self.puzzle.tiles.len() {
@@ -260,31 +267,7 @@ impl SquarePuzzlePermutateByCrossResolver {
             self.puzzle.tiles.swap(cur, i);
         }
 
-        // if start == self.puzzle.tiles.len() {
-        //     let cross_key: String = match self.get_cross_key() {
-        //         Err(error) => {
-        //             return Err(error);
-        //         }
-        //         Ok(key) => key,
-        //     };
-
-        //     let cross_solved: bool = match self.cross_map.get(&cross_key) {
-        //         Some(entry) => *entry,
-        //         None => {
-        //             let cross_solutions: Vec<String> = vec![];
-        //             self.cross_map.insert(cross_key, true);
-        //             true
-        //         }
-        //     };
-        // }
-
-        // for i in start..self.puzzle.tiles.len() {
-        //     self.puzzle.tiles.swap(start, i);
-        //     let _ = self.permutate(start + 1);
-        //     self.puzzle.tiles.swap(start, i);
-        // }
-
-        Ok(())
+        Ok(valid_solutions)
     }
 
     fn get_cross_key(&self) -> Result<String, String> {
@@ -311,6 +294,30 @@ impl SquarePuzzlePermutateByCrossResolver {
         }
         PuzzleSolution { tile_positions }
     }
+    
+    fn is_solved(&self) -> Result<bool, String> {
+        let cross_key: String = match self.get_cross_key() {
+            Err(error) => return Err(error),
+            Ok(key) => key,
+        };
+
+        let cross_solved: bool = match self.cross_map.get(&cross_key) {
+            Some(entry) => *entry,
+            None => {
+                    let cross_solutions: Vec<String> = vec![];
+                    self.cross_map.insert(cross_key, true);
+                    true
+                }
+            };
+
+
+        if !cross_solved {
+            return Ok(false);
+        }
+
+
+
+        Ok(true)
 }
 
 pub trait ConsoleDisplayablePuzzle {
