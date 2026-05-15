@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize, Serializer, Deserializer};
 use std::collections::HashMap;
 use std::io::stdout;
 
+use crate::create_puzzle;
+
 pub const BLUE: u8 = 1;
 pub const RED: u8 = 2;
 pub const GREEN: u8 = 3;
@@ -240,22 +242,30 @@ impl SquarePuzzlePermutateByCrossResolver {
     }
 
     pub fn get_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
-        match self.permutate_tiles(0) {
+        match self.permutate_and_validate_tiles(0) {
             Err(error) => Err(error),
             Ok(solutions) => Ok(solutions),
         }
     }
 
-    fn permutate_tiles(&mut self, cur: usize) -> Result<Vec<PuzzleSolution>, String> {
+    // go recursively through all permutations of tiles, and validate each one
+    fn permutate_and_validate_tiles(&mut self, cur: usize) -> Result<Vec<PuzzleSolution>, String> {
         let mut valid_solutions: Vec<PuzzleSolution> = vec![];
 
-        // If we have a complete permutation, check if it's a valid solution
+        // end of recursion, validate current permutation
         if cur == self.puzzle.tiles.len() {
-            let is_valid: Result<bool, String> = self.is_solved();
-            match is_valid {
+            let cross_solutions: Result<Vec<PuzzleSolution>, String> = self.get_cross_solutions();
+            match cross_solutions {
                 Err(error) => return Err(error),
-                Ok(true) => valid_solutions.push(self.get_current_solution()),
-                Ok(false) => {}
+                Ok(ref v) if v.is_empty() => return Ok(vec![]),
+                Ok(_) => {}
+            }
+
+            let rotation_result: Result<Vec<PuzzleSolution>, String> = self.rotate_and_validate();
+
+            match rotation_result {
+                Err(error) => return Err(error),
+                Ok(solutions) => valid_solutions.extend(solutions),
             }
         }
 
@@ -269,6 +279,15 @@ impl SquarePuzzlePermutateByCrossResolver {
 
         Ok(valid_solutions)
     }
+
+    fn rotate_and_validate(&self) -> Result<Vec<PuzzleSolution>, String> {
+        let mut valid_solutions: Vec<PuzzleSolution> = vec![];
+
+        
+
+        Ok(valid_solutions)
+    }
+
 
     fn get_cross_key(&self) -> Result<String, String> {
         if self.puzzle.tiles.len() != 9 {
