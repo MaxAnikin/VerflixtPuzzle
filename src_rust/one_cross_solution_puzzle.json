@@ -31,7 +31,7 @@
       "cur_rotation": 0,
       "sides": [
         {
-          "equal_part": "RED",
+          "equal_part": "GREEN",
           "bit_pattern": 3,
           "bit_value": "TAIL"
         },
@@ -43,7 +43,7 @@
         {
           "equal_part": "RED",
           "bit_pattern": 3,
-          "bit_value": "HEAD"
+          "bit_value": "TAIL"
         },
         {
           "equal_part": "RED",
@@ -88,7 +88,7 @@
           "bit_value": "TAIL"
         },
         {
-          "equal_part": "RED",
+          "equal_part": "GREEN",
           "bit_pattern": 3,
           "bit_value": "HEAD"
         },
@@ -109,22 +109,22 @@
       "cur_rotation": 0,
       "sides": [
         {
-          "equal_part": "RED",
+          "equal_part": "GREEN",
+          "bit_pattern": 3,
+          "bit_value": "HEAD"
+        },
+        {
+          "equal_part": "GREEN",
           "bit_pattern": 3,
           "bit_value": "TAIL"
         },
         {
-          "equal_part": "RED",
+          "equal_part": "GREEN",
           "bit_pattern": 3,
           "bit_value": "HEAD"
         },
         {
-          "equal_part": "RED",
-          "bit_pattern": 3,
-          "bit_value": "HEAD"
-        },
-        {
-          "equal_part": "RED",
+          "equal_part": "GREEN",
           "bit_pattern": 3,
           "bit_value": "TAIL"
         }
@@ -150,9 +150,9 @@
           "bit_value": "HEAD"
         },
         {
-          "equal_part": "RED",
+          "equal_part": "GREEN",
           "bit_pattern": 3,
-          "bit_value": "TAIL"
+          "bit_value": "HEAD"
         }
       ]
     },
@@ -192,9 +192,9 @@
           "bit_value": "TAIL"
         },
         {
-          "equal_part": "RED",
+          "equal_part": "GREEN",
           "bit_pattern": 3,
-          "bit_value": "HEAD"
+          "bit_value": "TAIL"
         },
         {
           "equal_part": "RED",

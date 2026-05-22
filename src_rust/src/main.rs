@@ -12,16 +12,18 @@ use std::time::Instant;
 
 fn main() {
     println!("{}", "Starting a puzzle game... Enjoy!".blue());
-    println!("{}", "Reading the all red puzzle...");
-
-
+    println!("{}", "Reading the all_red_puzzle...");
     // initialize solver with all-red puzzle from JSON
-    let all_red_puzzle: SquarePuzzle = read_json("all_red_puzzle.json").unwrap_or_else(|err| panic!("Error reading all_red_puzzle JSON: {}", err));
-    all_red_puzzle.show_in_console();
+    // let all_red_puzzle: SquarePuzzle = read_json("all_red_puzzle.json").unwrap_or_else(|err| panic!("Error reading all_red_puzzle JSON: {}", err));
+    // all_red_puzzle.show_in_console();
+
+    println!("{}", "Reading the one_cross_solution_puzzle...");
+    // initialize solver with all-red puzzle from JSON
+    let mut one_cross_solution_puzzle: SquarePuzzle = read_json("one_cross_solution_puzzle.json").unwrap_or_else(|err| panic!("Error reading one_cross_solution_puzzle JSON: {}", err));
 
     // Create resolver and find solutions for the all-red puzzle
     println!("{}", "Creating \"Permutation by cross\" resolver...");
-    let mut resolver: SquarePuzzlePermutateByCrossResolver = SquarePuzzlePermutateByCrossResolver::new(all_red_puzzle).unwrap_or_else(|err| panic!("Error creating resolver: {}", err));
+    let mut resolver: SquarePuzzlePermutateByCrossResolver = SquarePuzzlePermutateByCrossResolver::new(one_cross_solution_puzzle).unwrap_or_else(|err| panic!("Error creating resolver: {}", err));
 
     println!("{}", "Working on solutions...");
     let start: Instant = Instant::now();
@@ -29,7 +31,7 @@ fn main() {
     
     resolver.print_count();
     let duration: std::time::Duration = start.elapsed();
-    println!("Found {} solutions for all-red puzzle in {:?}.", solutions.len(), duration);
+    //println!("Found {} solutions for all-red puzzle in {:?}.", solutions.len(), duration);
 
     let start: Instant = Instant::now();
     let _s1: Result<PuzzleSolution, String> = resolver.puzzle.solve_with_permutations();
@@ -65,261 +67,261 @@ where
 }
 
 // Make puzzle creation functions public for use in main
-pub fn create_puzzle_all_red() -> SquarePuzzle {
-    let tiles: Vec<Tile> = vec![
-        // Tile 00
-        Tile {
-            id: "00".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 01
-        Tile {
-            id: "01".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 02
-        Tile {
-            id: "02".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 10
-        Tile {
-            id: "10".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 11
-        Tile {
-            id: "11".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 12
-        Tile {
-            id: "12".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 20
-        Tile {
-            id: "20".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 21
-        Tile {
-            id: "21".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        },
-                // Tile 22
-        Tile {
-            id: "22".to_string(),
-            direction: 0,
-            sides: vec![
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: HEAD,
-                },
-                TileSide {
-                    equal_part: RED,
-                    bit_pattern: BODY_PATTERN,
-                    bit_value: TAIL,
-                },
-            ],
-        }
-    ];
-    SquarePuzzle { tiles: tiles, is_solved: false }
-}
+// pub fn create_puzzle_all_red() -> SquarePuzzle {
+//     let tiles: Vec<Tile> = vec![
+//         // Tile 00
+//         Tile {
+//             id: "00".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 01
+//         Tile {
+//             id: "01".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 02
+//         Tile {
+//             id: "02".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 10
+//         Tile {
+//             id: "10".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 11
+//         Tile {
+//             id: "11".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 12
+//         Tile {
+//             id: "12".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 20
+//         Tile {
+//             id: "20".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 21
+//         Tile {
+//             id: "21".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         },
+//                 // Tile 22
+//         Tile {
+//             id: "22".to_string(),
+//             cur_rotation: 0,
+//             sides: vec![
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: HEAD,
+//                 },
+//                 TileSide {
+//                     equal_part: RED,
+//                     bit_pattern: BODY_PATTERN,
+//                     bit_value: TAIL,
+//                 },
+//             ],
+//         }
+//     ];
+//     SquarePuzzle { tiles: tiles, is_solved: false }
+// }
 
-pub fn create_puzzle() -> SquarePuzzle {
+ pub fn create_puzzle() -> SquarePuzzle {
     let tiles: Vec<Tile> = vec![
         // Tile 00
         Tile {
             id: "00".to_string(),
-            direction: 0,
+            cur_rotation: 0,
             sides: vec![
                 TileSide {
                     equal_part: BLUE,

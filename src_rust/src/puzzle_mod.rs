@@ -4,7 +4,7 @@
 use colored::Colorize;
 use crossterm::{cursor, execute, terminal, style::{Color as TermColor, SetForegroundColor, Print, ResetColor}};
 use serde::{Deserialize, Serialize, Serializer, Deserializer};
-use std::collections::HashMap;
+use std::{clone, collections::HashMap, io, thread, time::Duration};
 use std::io::stdout;
 
 use crate::create_puzzle;
@@ -103,35 +103,67 @@ impl TileSide {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Tile {
     pub id: String,
-    pub direction: u8,
     pub sides: Vec<TileSide>,
+    pub cur_rotation: u8
 }
 
 impl Tile {
+    pub fn new(id: String, sides: Vec<TileSide>) -> Self {
+        Tile {
+            id,
+            sides,
+            cur_rotation: 0,
+        }
+    }
+
     pub fn rotate(&mut self) {
-        self.direction += 1;
-        if self.direction > 3 {
-            self.direction = 0;
+        self.cur_rotation += 1;
+        if self.cur_rotation > 3 {
+            self.cur_rotation = 0;
         }
     }
     pub fn left_side(&self) -> &TileSide {
-        &self.sides[self.direction as usize]
+        let mut tile_num: i8 = 0 - self.cur_rotation as i8;
+
+        if tile_num < 0 {
+            tile_num += 4;
+        }
+
+        &self.sides[tile_num as usize]
     }
     pub fn up_side(&self) -> &TileSide {
-        &self.sides[(self.direction + 1) as usize]
+        let mut tile_num: i8 = 1 - self.cur_rotation as i8;
+
+        if tile_num < 0 {
+            tile_num += 4;
+        }
+
+        &self.sides[tile_num as usize]
     }
     pub fn right_side(&self) -> &TileSide {
-        &self.sides[(self.direction + 2) as usize]
+        let mut tile_num: i8 = 2 - self.cur_rotation as i8;
+
+        if tile_num < 0 {
+            tile_num += 4;
+        }
+
+        &self.sides[tile_num as usize]
     }
     pub fn down_side(&self) -> &TileSide {
-        &self.sides[(self.direction + 3) as usize]
+        let mut tile_num: i8 = 3 - self.cur_rotation as i8;
+
+        if tile_num < 0 {
+            tile_num += 4;
+        }
+
+        &self.sides[tile_num as usize]
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct TilePosition {
     pub id: String,
-    pub direction: u8,
+    pub cur_rotation: u8,
 }
 
 #[derive(Debug, Clone)]
@@ -172,6 +204,10 @@ pub struct SquarePuzzle {
 }
 
 impl SquarePuzzle {
+    pub fn get_tile(&self, index: usize) -> &Tile {
+        &self.tiles[index]
+    }
+
     pub fn print_is_solved(&self, message: String) {
         let is_solved: bool = self.is_solved;
         println!(
@@ -242,25 +278,18 @@ impl SquarePuzzlePermutateByCrossResolver {
     }
 
     pub fn get_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
-        match self.permutate_and_validate_tiles(0) {
+        match self.permutate_and_validate(0) {
             Err(error) => Err(error),
             Ok(solutions) => Ok(solutions),
         }
     }
 
     // go recursively through all permutations of tiles, and validate each one
-    fn permutate_and_validate_tiles(&mut self, cur: usize) -> Result<Vec<PuzzleSolution>, String> {
+    fn permutate_and_validate(&mut self, cur: usize) -> Result<Vec<PuzzleSolution>, String> {
         let mut valid_solutions: Vec<PuzzleSolution> = vec![];
 
         // end of recursion, validate current permutation
         if cur == self.puzzle.tiles.len() {
-            let cross_solutions: Result<Vec<PuzzleSolution>, String> = self.get_cross_solutions();
-            match cross_solutions {
-                Err(error) => return Err(error),
-                Ok(ref v) if v.is_empty() => return Ok(vec![]),
-                Ok(_) => {}
-            }
-
             let rotation_result: Result<Vec<PuzzleSolution>, String> = self.rotate_and_validate();
 
             match rotation_result {
@@ -272,7 +301,7 @@ impl SquarePuzzlePermutateByCrossResolver {
         for i in cur..self.puzzle.tiles.len() {
             self.puzzle.tiles.swap(cur, i);
             
-            let _ = self.permutate_tiles(cur + 1);
+            let _ = self.permutate_and_validate(cur + 1);
 
             self.puzzle.tiles.swap(cur, i);
         }
@@ -280,14 +309,42 @@ impl SquarePuzzlePermutateByCrossResolver {
         Ok(valid_solutions)
     }
 
-    fn rotate_and_validate(&self) -> Result<Vec<PuzzleSolution>, String> {
+    fn rotate_and_validate(&mut self) -> Result<Vec<PuzzleSolution>, String> {
         let mut valid_solutions: Vec<PuzzleSolution> = vec![];
 
-        
+        let cross_solutions_result: Result<Vec<PuzzleSolution>, String> = self.get_cross_solutions();
+        match cross_solutions_result {
+            Err(error) => return Err(error),
+            // return if empty cross solutions, no need to rotate corners
+            Ok(ref v) if v.is_empty() => return Ok(vec![]),
+            // continue if there are cross solutions
+            Ok(_) => {}
+        }
+
+        let cross_solutions = cross_solutions_result.unwrap();
+        for i in 0..cross_solutions.len() {
+            // apply cross solution to the puzzle 
+            let apply_result: Result<(), String> = self.apply_cross_solution(cross_solutions[i].clone());
+            match apply_result {
+                Err(error) => return Err(error),
+                // continue if applied successfully
+                Ok(_) => {}
+            }
+
+            let full_solutions: Result<Vec<PuzzleSolution>, String> = self.rotate_and_validate_corners();
+            match full_solutions {
+                Err(error) => return Err(error),
+                // return if empty full solutions
+                Ok(ref v) if v.is_empty() => return Ok(vec![]),
+                // continue if there are full solutions
+                Ok(_) => {}
+            }
+
+            valid_solutions.extend(full_solutions.unwrap());
+        }
 
         Ok(valid_solutions)
     }
-
 
     fn get_cross_key(&self) -> Result<String, String> {
         if self.puzzle.tiles.len() != 9 {
@@ -308,35 +365,110 @@ impl SquarePuzzlePermutateByCrossResolver {
         for tile in &self.puzzle.tiles {
             tile_positions.push(TilePosition {
                 id: tile.id.clone(),
-                direction: tile.direction,
+                cur_rotation: tile.cur_rotation,
             });
         }
         PuzzleSolution { tile_positions }
     }
     
     fn is_solved(&self) -> Result<bool, String> {
-        let cross_key: String = match self.get_cross_key() {
-            Err(error) => return Err(error),
-            Ok(key) => key,
-        };
+        let t = &self.puzzle.tiles;
 
-        let cross_solved: bool = match self.cross_map.get(&cross_key) {
-            Some(entry) => *entry,
-            None => {
-                    let cross_solutions: Vec<String> = vec![];
-                    self.cross_map.insert(cross_key, true);
-                    true
-                }
-            };
-
-
-        if !cross_solved {
-            return Ok(false);
+        // Horizontal pairs: right side of left tile must match left side of right tile
+        let h_pairs = [(0,1),(1,2),(3,4),(4,5),(6,7),(7,8)];
+        for (a, b) in h_pairs.iter() {
+            if !t[*a].right_side().compare(t[*b].left_side()) {
+                return Ok(false);
+            }
         }
 
-
+        // Vertical pairs: down side of top tile must match up side of bottom tile
+        let v_pairs = [(0,3),(1,4),(2,5),(3,6),(4,7),(5,8)];
+        for (a, b) in v_pairs.iter() {
+            if !t[*a].down_side().compare(t[*b].up_side()) {
+                return Ok(false);
+            }
+        }
 
         Ok(true)
+    }
+
+    fn is_cross_solved(&self) -> Result<bool, String> {
+        let t = &self.puzzle.tiles;
+
+        // Horizontal pairs: right side of left tile must match left side of right tile
+        let h_pairs = [(3,4),(4,5)];
+        for (a, b) in h_pairs.iter() {
+            if !t[*a].right_side().compare(t[*b].left_side()) {
+                return Ok(false);
+            }
+        }
+
+        // Vertical pairs: down side of top tile must match up side of bottom tile
+        let v_pairs = [(1,4),(4,7)];
+        for (a, b) in v_pairs.iter() {
+            if !t[*a].down_side().compare(t[*b].up_side()) {
+                return Ok(false);
+            }
+        }
+
+        Ok(true)
+    }
+
+    fn get_cross_solutions(&mut self) -> Result<Vec<PuzzleSolution>, String> {
+        // todo!(try reading from cache);
+
+        let mut cross_tiles: Vec<usize> = vec![1, 3, 4, 5, 7];
+        let mut cross_solutions: Vec<PuzzleSolution> = vec![];
+        self.get_cross_solutions_recursive(&mut cross_solutions, &mut cross_tiles)?;
+        Ok(cross_solutions)
+    }
+
+    fn get_cross_solutions_recursive(&mut self, cross_solutions: &mut Vec<PuzzleSolution>, cross_tiles: &mut Vec<usize>) -> Result<(),String> {
+        if cross_tiles.is_empty() {
+            self.puzzle.show_in_console();
+            println!("{}", "Press ENTER to continue.".green());
+
+            let mut input = String::new();
+                io::stdin()
+                .read_line(&mut input)
+                .expect("Read input error.");
+
+            let is_solved = self.is_cross_solved();
+                match is_solved {
+                    Err(error) => return Err(error),    
+                    Ok(true) => {
+                        self.puzzle.show_in_console();
+                        println!("{}", "Press ENTER to continue.".green());
+                        let mut input = String::new();
+                            io::stdin()
+                            .read_line(&mut input)
+                            .expect("Read input error.");
+
+                        cross_solutions.push(self.get_current_solution());
+                        return Ok(())
+                    },
+                    Ok(false) => return Ok(()),
+                }
+        }
+
+        let tile_to_rotate = cross_tiles.pop().unwrap();
+        for _i in 0..3 
+        {
+            self.get_cross_solutions_recursive(cross_solutions, cross_tiles)?;
+            self.puzzle.tiles[tile_to_rotate].rotate();
+        }
+
+        return Ok(());
+    }
+    
+    fn apply_cross_solution(&self, solution: PuzzleSolution) -> Result<(), String> {
+        todo!()
+    }
+    
+    fn rotate_and_validate_corners(&self) -> Result<Vec<PuzzleSolution>, String> {
+        todo!()
+    }
 }
 
 pub trait ConsoleDisplayablePuzzle {
@@ -416,3 +548,4 @@ impl ConsoleDisplayablePuzzle for SquarePuzzle {
         execute!(out, cursor::MoveTo(0, 3 * tile_h + 1)).unwrap();
     }
 }
+

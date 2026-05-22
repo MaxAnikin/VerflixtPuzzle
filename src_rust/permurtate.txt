@@ -1,1 +1,0 @@
-solution: Total permutations checked: 362880
