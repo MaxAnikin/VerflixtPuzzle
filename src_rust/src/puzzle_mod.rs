@@ -309,7 +309,7 @@ impl SquarePuzzlePermutateByCrossResolver {
         Ok(valid_solutions)
     }
 
-    fn rotate_and_validate(&mut self) -> Result<Vec<PuzzleSolution>, String> {
+    pub fn rotate_and_validate(&mut self) -> Result<Vec<PuzzleSolution>, String> {
         let mut valid_solutions: Vec<PuzzleSolution> = vec![];
 
         let cross_solutions_result: Result<Vec<PuzzleSolution>, String> = self.get_cross_solutions();
@@ -426,13 +426,13 @@ impl SquarePuzzlePermutateByCrossResolver {
 
     fn get_cross_solutions_recursive(&mut self, cross_solutions: &mut Vec<PuzzleSolution>, cross_tiles: &mut Vec<usize>) -> Result<(),String> {
         if cross_tiles.is_empty() {
-            self.puzzle.show_in_console();
-            println!("{}", "Press ENTER to continue.".green());
+            // self.puzzle.show_in_console();
+            // println!("{}", "Press ENTER to continue.".green());
 
-            let mut input = String::new();
-                io::stdin()
-                .read_line(&mut input)
-                .expect("Read input error.");
+            // let mut input = String::new();
+            //     io::stdin()
+            //     .read_line(&mut input)
+            //     .expect("Read input error.");
 
             let is_solved = self.is_cross_solved();
                 match is_solved {
@@ -453,11 +453,12 @@ impl SquarePuzzlePermutateByCrossResolver {
         }
 
         let tile_to_rotate = cross_tiles.pop().unwrap();
-        for _i in 0..3 
+        for _i in 0..4
         {
             self.get_cross_solutions_recursive(cross_solutions, cross_tiles)?;
             self.puzzle.tiles[tile_to_rotate].rotate();
         }
+        cross_tiles.push(tile_to_rotate);
 
         return Ok(());
     }

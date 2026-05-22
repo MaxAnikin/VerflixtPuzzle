@@ -26,8 +26,10 @@ fn main() {
     let mut resolver: SquarePuzzlePermutateByCrossResolver = SquarePuzzlePermutateByCrossResolver::new(one_cross_solution_puzzle).unwrap_or_else(|err| panic!("Error creating resolver: {}", err));
 
     println!("{}", "Working on solutions...");
+
     let start: Instant = Instant::now();
-    let solutions: Vec<PuzzleSolution> = resolver.get_solutions().unwrap_or_else(|err| panic!("Solver error: {}", err));
+    //let solutions: Vec<PuzzleSolution> = resolver.get_solutions().unwrap_or_else(|err| panic!("Solver error: {}", err));
+    let solutions: Vec<PuzzleSolution> = resolver.rotate_and_validate().unwrap_or_else(|err| panic!("Solver error: {}", err));
     
     resolver.print_count();
     let duration: std::time::Duration = start.elapsed();
