@@ -12,7 +12,7 @@ use std::time::Instant;
 
 fn main() {
     println!("{}", "Starting a puzzle game... Enjoy!".blue());
-    println!("{}", "Reading the all_red_puzzle...");
+    //println!("{}", "Reading the all_red_puzzle...");
     // initialize solver with all-red puzzle from JSON
     // let all_red_puzzle: SquarePuzzle = read_json("all_red_puzzle.json").unwrap_or_else(|err| panic!("Error reading all_red_puzzle JSON: {}", err));
     // all_red_puzzle.show_in_console();
