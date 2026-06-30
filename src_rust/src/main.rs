@@ -15,7 +15,7 @@ fn main() {
     //println!("{}", "Reading the all_red_puzzle...");
     // initialize solver with all-red puzzle from JSON
     // let all_red_puzzle: SquarePuzzle = read_json("all_red_puzzle.json").unwrap_or_else(|err| panic!("Error reading all_red_puzzle JSON: {}", err));
-    // all_red_puzzle.show_in_console();
+    all_red_puzzle.show_in_console();
 
     println!("{}", "Reading the one_cross_solution_puzzle...");
     // initialize solver with all-red puzzle from JSON
